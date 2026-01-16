@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World: Blog Boilerplate</title>
+    <link rel="icon" type="image/x-icon" href="imgs/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Specific overrides for blog post content if needed, though clean styles should be in style.css */
+        .blog-post h1 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            color: #000000;
+            /* White text for global change */
+        }
+
+        .blog-post {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2rem auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="subpage white-page">
+
+                                    <header class="scrolled">
+        <div class="logo-container">
+            <a href="index.html" class="logo-link">
+                <img src="imgs/color.png" alt="Fringe Metrology Logo" class="logo-img">
+                <span class="logo-text">Fringe Metrology</span>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li class="nav-item">
+                    <a href="#">Products</a>
+                    <div class="dropdown">
+                        <div class="dropdown-content">
+                            <div class="dropdown-featured">
+                                <a href="fringescan.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('imgs/fringescan.gif')"></div>
+                                    <div class="card-text">
+                                        <h4>FringeScan</h4>
+                                        <p>High precision, large area surface scanning<svg class="arrow-right"
+                                                width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <line x1="7" y1="17" x2="17" y2="7"></line>
+                                                <polyline points="7 7 17 7 17 17"></polyline>
+                                            </svg></p>
+                                    </div>
+                                </a>
+                                <a href="fringeshot.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('imgs/16mm_fringeshot.jpg')">
+                                    </div>
+                                    <div class="card-text">
+                                        <h4>FringeShot</h4>
+                                        <p>Rapid Capture Technology <svg class="arrow-right" width="12" height="12"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="7" y1="17" x2="17" y2="7"></line>
+                                                <polyline points="7 7 17 7 17 17"></polyline>
+                                            </svg></p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Technology</a>
+                    <div class="dropdown">
+                        <div class="dropdown-content">
+                            <div class="dropdown-featured">
+                                <a href="projection.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
+                                    <div class="card-text">
+                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <p>High precision, large surfaces <svg class="arrow-right" width="12"
+                                                height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="7" y1="17" x2="17" y2="7"></line>
+                                                <polyline points="7 7 17 7 17 17"></polyline>
+                                            </svg></p>
+                                    </div>
+                                </a>
+                                <a href="structured-light.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('imgs/chips.png')"></div>
+                                    <div class="card-text">
+                                        <h4>Structured Light Autocollimator</h4>
+                                        <p>Ultra precision, small surface <svg class="arrow-right" width="12"
+                                                height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="7" y1="17" x2="17" y2="7"></line>
+                                                <polyline points="7 7 17 7 17 17"></polyline>
+                                            </svg></p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item"><a href="about.html">About Us</a></li>
+                <li class="nav-item"><a href="blog.html">Blog</a></li>
+                <li class="nav-item"><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+        <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
+    </header>
+
+    <main>
+        <section class="subpage-hero has-image" style="background-image: url('imgs/logo_white.png');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Hello World: Blog Boilerplate</h1>
+                <p>January 16, 2026</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container">
+                <article class="blog-post">
+                    <h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5>Heading 5</h5>
+<h6>Heading 6</h6>
+<p>This is a paragraph with <strong>bold text</strong>, <em>italic text</em>, and <strong><em>bold italic text</em></strong>. You can also use ~~strikethrough~~ if supported.</p>
+<h2>Lists</h2>
+<h3>Unordered List</h3>
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Sub-item 2.1</li>
+<li>Sub-item 2.2</li>
+<li>Item 3</li>
+</ul>
+<h3>Ordered List</h3>
+<ol>
+<li>First step</li>
+<li>Second step</li>
+<li>Third step</li>
+</ol>
+<h2>Blockquotes</h2>
+<blockquote>
+<p>This is a blockquote. It's useful for highlighting important information or quotes from other sources.</p>
+</blockquote>
+<h2>Code</h2>
+<p>Inline code looks like <code>this</code>.</p>
+<h3>Code Block</h3>
+<p><code>javascript
+function greet() {
+  console.log("Hello, Fringe Metrology!");
+}
+greet();</code></p>
+<h2>Links and Images</h2>
+<p><a href="index.html">This is a link to our home page</a></p>
+<h2><img alt="Fringe Metrology Logo" src="imgs/color.png" /></h2>
+<p><em>End of boilerplate.</em></p>
+
+                    <a href="blog.html" class="back-link">← Back to Blog</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+                                    <footer>
+        <p>&copy; 2026 Fringe Metrology. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="terms.html">Terms of Use</a>
+            <span class="footer-divider">|</span>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

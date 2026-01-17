@@ -124,9 +124,10 @@ def update_blog_index(posts):
         description = post.get('description', '')
         
         cards_html += f'''
-                    <article class="blog-card">
+                    <article class="blog-card" data-type="{post.get('type', 'Case Study').replace(' ', '-').lower()}">
                         <div class="blog-card-image" style="background-image: url('{image}')"></div>
                         <div class="blog-card-content">
+                            <span class="blog-type">{post.get('type', 'Case Study')}</span>
                             <span class="blog-date">{date_str}</span>
                             <h3>{title}</h3>
                             <p>{description}</p>

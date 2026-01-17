@@ -36,12 +36,16 @@ HTML_FILES = [
     "terms.html",
     "privacy.html",
 ]
-IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'}
+
+IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'}
+
 
 # Standard footer HTML (for root-level pages)
 STANDARD_FOOTER = """    <footer>
         <p>&copy; 2026 Fringe Metrology. All rights reserved.</p>
         <div class="footer-links">
+            <a href="contact.html">Contact Us</a>
+            <span class="footer-divider">|</span>
             <a href="terms.html">Terms of Use</a>
             <span class="footer-divider">|</span>
             <a href="privacy.html">Privacy Policy</a>
@@ -52,9 +56,11 @@ STANDARD_FOOTER = """    <footer>
 STANDARD_FOOTER_BLOG = """    <footer>
         <p>&copy; 2026 Fringe Metrology. All rights reserved.</p>
         <div class="footer-links">
-            <a href="terms.html">Terms of Use</a>
+            <a href="../contact.html">Contact Us</a>
             <span class="footer-divider">|</span>
-            <a href="privacy.html">Privacy Policy</a>
+            <a href="../terms.html">Terms of Use</a>
+            <span class="footer-divider">|</span>
+            <a href="../privacy.html">Privacy Policy</a>
         </div>
     </footer>"""
 
@@ -111,7 +117,7 @@ STANDARD_HEADER = """    <header class="scrolled">
                                 <a href="projection.html" class="featured-card">
                                     <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
-                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
                                                 height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -201,7 +207,7 @@ STANDARD_HEADER_INDEX = """    <header>
                                 <a href="projection.html" class="featured-card">
                                     <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
-                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
                                                 height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -291,7 +297,7 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                                 <a href="projection.html" class="featured-card">
                                     <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
-                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
                                                 height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -393,6 +399,57 @@ def update_header(html_content, is_blog=False, is_index=False):
     new_content, count = re.subn(header_pattern, standard, html_content)
     return new_content, count > 0
 
+def update_partners_section(html_content, available_images):
+    """Update the partners/customers section with scrolling logos."""
+    # Use explicit markers for reliability
+    partners_pattern = r'(<!-- PARTNERS_START -->)([\s\S]*?)(<!-- PARTNERS_END -->)'
+    
+    # Identify logo images
+    logo_images = []
+    for stem, filename in available_images.items():
+        if 'logo' in stem:
+             if filename not in [x[1] for x in logo_images]:
+                 logo_images.append((stem, filename))
+    
+    if not logo_images:
+        print("No logo images found for partners section.")
+        return html_content, False
+
+    # Sort for consistency
+    logo_images.sort()
+
+    # Generate images HTML
+    images_html = ""
+    for _, filename in logo_images:
+        images_html += f'<img src="imgs/{filename}" alt="Partner Logo" class="partner-logo" loading="lazy">\n'
+    
+    # Create a base set that is long enough to likely fill a screen width
+    # Assuming avg logo width + gap ~ 200px. 1920px screen ~ 10 logos.
+    base_set = images_html
+    # Count occurrences of img tag to estimate count
+    count = base_set.count('<img')
+    
+    # Repeat until we have at least 15 items in the base set to be safe
+    while base_set.count('<img') < 15:
+        base_set += images_html
+        
+    new_section_content = f"""
+                <div class="partners-track">
+                    <div class="slide-track">
+                        {base_set}
+                    </div>
+                    <div class="slide-track">
+                        {base_set}
+                    </div>
+                </div>
+                """
+    
+    def replace_content(match):
+        return f"{match.group(1)}{new_section_content}{match.group(3)}"
+    
+    new_content, count = re.subn(partners_pattern, replace_content, html_content)
+    return new_content, count > 0
+
 def update_html_file(html_path, available_images, dry_run=False, update_common=True):
     """Update placeholders and common elements in a single HTML file."""
     if not html_path.exists():
@@ -404,7 +461,9 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
     original_content = content
     placeholder_updates = []
     common_updates = []
+    common_updates = []
     conversion_updates = []
+    partner_updates = []
     
     is_blog = 'blog' in str(html_path)
     is_index = html_path.name == 'index.html' and not is_blog
@@ -471,15 +530,26 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
             common_updates.append({
                 'file': html_path.name,
                 'type': 'header',
+                'type': 'header',
                 'description': 'Updated to standard header'
             })
+            
+        # Update partners section (only for index.html for now)
+        if is_index:
+             content, partners_updated = update_partners_section(content, available_images)
+             if partners_updated:
+                 partner_updates.append({
+                     'file': html_path.name,
+                     'type': 'partners',
+                     'description': 'Updated partners/customers scrolling section'
+                 })
     
     # Only write if something changed
     if content != original_content and not dry_run:
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(content)
     
-    return placeholder_updates, common_updates, conversion_updates
+    return placeholder_updates, common_updates, conversion_updates, partner_updates
 
 def main():
     dry_run = '--dry-run' in sys.argv
@@ -494,27 +564,31 @@ def main():
     
     all_placeholder_updates = []
     all_common_updates = []
+    all_common_updates = []
     all_conversion_updates = []
+    all_partner_updates = []
     
     for html_file in HTML_FILES:
         html_path = SCRIPT_DIR / html_file
-        placeholder_updates, common_updates, conversion_updates = update_html_file(
+        placeholder_updates, common_updates, conversion_updates, partner_updates = update_html_file(
             html_path, available_images, dry_run, not skip_common
         )
         all_placeholder_updates.extend(placeholder_updates)
         all_common_updates.extend(common_updates)
         all_conversion_updates.extend(conversion_updates)
+        all_partner_updates.extend(partner_updates)
     
     # Also check blog folder
     blog_dir = SCRIPT_DIR / "blog"
     if blog_dir.exists():
         for html_file in blog_dir.glob("*.html"):
-            placeholder_updates, common_updates, conversion_updates = update_html_file(
+            placeholder_updates, common_updates, conversion_updates, partner_updates = update_html_file(
                 html_file, available_images, dry_run, not skip_common
             )
             all_placeholder_updates.extend(placeholder_updates)
             all_common_updates.extend(common_updates)
             all_conversion_updates.extend(conversion_updates)
+            all_partner_updates.extend(partner_updates)
     
     # Report results
     if all_conversion_updates:
@@ -542,7 +616,14 @@ def main():
     elif not skip_common:
         print("No common element updates needed.\n")
     
-    if not all_placeholder_updates and not all_common_updates and not all_conversion_updates:
+    if all_partner_updates:
+        print("Partner section updates:" if not dry_run else "Partner section updates that would be made:")
+        print("-" * 60)
+        for update in all_partner_updates:
+            print(f"  {update['file']}: {update['description']}")
+        print(f"Total: {len(all_partner_updates)} partner section(s) updated\n")
+
+    if not all_placeholder_updates and not all_common_updates and not all_conversion_updates and not all_partner_updates:
         print("No updates were needed.")
 
 if __name__ == "__main__":

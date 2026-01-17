@@ -1,0 +1,100 @@
+
+/* Tradeoff Graphic Styles */
+.tradeoff-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+    position: relative;
+}
+
+.tradeoff-graphic {
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+}
+
+.triangle-frame {
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+}
+
+/* Ensure shapes have specific fill and no black default */
+.tradeoff-shape {
+    fill-opacity: 0.5;
+    stroke: rgba(255,255,255,0.8);
+    stroke-width: 2;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.tradeoff-shape:hover {
+    fill-opacity: 0.8;
+    stroke: #fff;
+    stroke-width: 4;
+    filter: url(#glow);
+}
+
+.shape-contact {
+    fill: #1e5a6b !important; /* Dark Teal */
+}
+
+.shape-optical {
+    fill: #3daad6 !important; /* Cyan/Blue */
+}
+
+.shape-interferometric {
+    fill: #1d3e8a !important; /* Deep Blue */
+}
+
+.shape-unknown {
+    fill: #8a7a3d !important; /* Gold/Brown */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+.shape-unknown {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.axis-label {
+    fill: #011D49; /* Dark Blue for white page */
+    font-size: 24px;
+    font-weight: 600;
+    font-family: var(--font-main);
+}
+
+.tech-label {
+    fill: #333; /* Dark Grey for white page */
+    font-size: 18px;
+    font-weight: 500;
+    font-family: var(--font-main);
+}
+
+.label-line {
+    stroke: #333;
+}
+
+.question-mark {
+    fill: #fff;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.tradeoff-description {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: var(--bg-primary); /* Dark text */
+    min-height: 3rem;
+    text-align: center;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+    max-width: 800px;
+}

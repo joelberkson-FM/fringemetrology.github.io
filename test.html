@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocollimator Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #000;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            background-color: #011D49;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            width: 1000px;
+            /* Widened slightly to fit new component */
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .controls {
+            padding: 25px;
+            background-color: #001538;
+            border-top: 1px solid #1a3a6e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: #cce85e;
+        }
+
+        input[type=range] {
+            width: 300px;
+            cursor: pointer;
+            accent-color: #cce85e;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            width: 310px;
+            font-size: 12px;
+            color: white;
+            font-weight: 300;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <canvas id="simCanvas" width="1000" height="480"></canvas>
+
+        <div class="controls">
+            <label for="tiltSlider">Mirror Tilt</label>
+            <input type="range" id="tiltSlider" min="-3" max="3" step="0.05" value="0">
+            <div class="labels">
+                <span>-3&deg;</span>
+                <span>0&deg;</span>
+                <span>+3&deg;</span>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="js/experiment-shared.js"></script>
+    <script src="js/autocollimator.js"></script>
+</body>
+
+</html>

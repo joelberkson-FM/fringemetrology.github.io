@@ -14,7 +14,7 @@
 
 <body class="subpage white-page">
 
-                                                                    <header class="scrolled">
+                            <header class="scrolled">
         <div class="logo-container">
             <a href="index.html" class="logo-link">
                 <img src="imgs/color.png" alt="Fringe Metrology Logo" class="logo-img">
@@ -66,7 +66,7 @@
                                 <a href="projection.html" class="featured-card">
                                     <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
-                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
                                                 height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -113,13 +113,20 @@
 
         <section class="content-section">
             <div class="container">
+                <div class="blog-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="case-study">Case Studies</button>
+                    <button class="filter-btn" data-filter="whitepaper">Whitepapers</button>
+                    <button class="filter-btn" data-filter="announcement">Announcements</button>
+                </div>
                 <div class="blog-grid">
                     <!-- BLOG_POSTS_START -->
                     <!-- Posts will be injected here by build_blog.py -->
 
-                    <article class="blog-card">
+                    <article class="blog-card" data-type="case-study">
                         <div class="blog-card-image" style="background-image: url('imgs/dish.png')"></div>
                         <div class="blog-card-content">
+                            <span class="blog-type">Case Study</span>
                             <span class="blog-date">January 16, 2026</span>
                             <h3>Unlocking Efficient Panel Manufacturing for the ngVLA</h3>
                             <p>The next-generation Very Large Array (ngVLA) radio telescope aims to produce 250, 18-meter aperture telescope in the next decade. This telescope will be able to resolve objects in the sky, like black holes, in a way that has never been seen before.</p>
@@ -132,9 +139,10 @@
                         </div>
                     </article>
 
-                    <article class="blog-card">
+                    <article class="blog-card" data-type="case-study">
                         <div class="blog-card-image" style="background-image: url('imgs/root_cause.png')"></div>
                         <div class="blog-card-content">
+                            <span class="blog-type">Case Study</span>
                             <span class="blog-date">January 16, 2026</span>
                             <h3>Root Cause Identification and Corrective Action</h3>
                             <p>How high-resolution fringe measurement identified a grid-shaped surface error in LFAST mirrors, leading to a successful corrective action.</p>
@@ -147,9 +155,10 @@
                         </div>
                     </article>
 
-                    <article class="blog-card">
+                    <article class="blog-card" data-type="case-study">
                         <div class="blog-card-image" style="background-image: url('imgs/fringe_damage.jpg')"></div>
                         <div class="blog-card-content">
+                            <span class="blog-type">Case Study</span>
                             <span class="blog-date">January 15, 2026</span>
                             <h3>Damage Analysis – Radio Telescope Panel</h3>
                             <p>A case study on analyzing damage to a composite-material radio telescope panel with sub-millimeter precision.</p>
@@ -167,12 +176,14 @@
         </section>
     </main>
 
-                                                                    <footer>
+                            <footer>
         <p>&copy; 2026 Fringe Metrology. All rights reserved.</p>
         <div class="footer-links">
-            <a href="terms.html">Terms of Use</a>
+            <a href="../contact.html">Contact Us</a>
             <span class="footer-divider">|</span>
-            <a href="privacy.html">Privacy Policy</a>
+            <a href="../terms.html">Terms of Use</a>
+            <span class="footer-divider">|</span>
+            <a href="../privacy.html">Privacy Policy</a>
         </div>
     </footer>
 

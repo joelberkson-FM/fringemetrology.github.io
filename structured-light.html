@@ -67,7 +67,7 @@
                                     <div class="card-image"
                                         style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
-                                        <h4>Fringe Projection Deflectometry</h4>
+                                        <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
                                                 height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -160,33 +160,21 @@
                             alt="sla_full_understanding.jpg"></div>
                 </div>
             </div>
+        </section>
 
-            <!-- Row 4: Image | Text -->
-            <div class="feature-row left">
-                <div class="feature-icon-column">
-                    <div class="image-placeholder"><img src="imgs/sla_scalable_design.jpg"
-                            alt="sla_scalable_design.jpg"></div>
-                </div>
-                <div class="feature-text-column">
-                    <div>
-                        <h3>Scalable By Design</h3>
-                        <p>Our 16 mm aperture prototype showcases the full capability of SLA in a compact, stable
-                            package. Because the architecture is entirely digital and telecentric, we can scale
-                            aperture, speed, and resolution to meet a wide range of surface metrology needs:</p>
-                        <ul>
-                            <li>1 mm – 300 mm aperture</li>
-                            <li>1 μm – 65 μm lateral resolution</li>
-                            <li>&lt; 1 nm RMS absolute repeatability</li>
-                            <li>&lt;0.01 nm repeatability of RMS</li>
-                            <li>&lt;λ/20 RMS accuracy</li>
-                            <li>&lt;5 seconds per measurement</li>
-                        </ul>
-                        <p class="spec-note">Pilot units are available for preorder, with initial deliveries
-                            planned for 2026.</p>
-                    </div>
+        <!-- Autocollimator Graphic Section -->
+        <section class="autocollimator-section">
+            <div class="autocollimator-container">
+                <canvas id="simCanvas" width="1000" height="480"></canvas>
+                <div class="ac-controls">
+                    <label for="tiltSlider">Mirror Tilt</label>
+                    <input type="range" id="tiltSlider" min="-3" max="3" step="0.05" value="0">
                 </div>
             </div>
         </section>
+
+        <script src="js/experiment-shared.js"></script>
+        <script src="js/autocollimator.js"></script>
         <section class="contact-cta-section">
             <div class="contact-cta-container">
                 <h2>Interested?</h2>
@@ -202,6 +190,8 @@
     <footer>
         <p>&copy; 2026 Fringe Metrology. All rights reserved.</p>
         <div class="footer-links">
+            <a href="contact.html">Contact Us</a>
+            <span class="footer-divider">|</span>
             <a href="terms.html">Terms of Use</a>
             <span class="footer-divider">|</span>
             <a href="privacy.html">Privacy Policy</a>

@@ -1,111 +1,125 @@
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-thin.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Thin.ttf') format('truetype');
     font-weight: 100;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-thinoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-ThinItalic.ttf') format('truetype');
     font-weight: 100;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-light.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-ExtraLightItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-lightoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-LightItalic.ttf') format('truetype');
     font-weight: 300;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-regular.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-regularoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-medium.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-mediumoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-MediumItalic.ttf') format('truetype');
     font-weight: 500;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-demibold.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-demiboldoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-SemiBoldItalic.ttf') format('truetype');
     font-weight: 600;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-bold.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-boldoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-extrabold.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-ExtraBold.ttf') format('truetype');
     font-weight: 800;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-extraboldoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-ExtraBoldItalic.ttf') format('truetype');
     font-weight: 800;
     font-style: italic;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-heavy.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Visby CF';
-    src: url('../fonts/Fontspring-DEMO-visbycf-heavyoblique.otf') format('opentype');
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-BlackItalic.ttf') format('truetype');
     font-weight: 900;
     font-style: italic;
 }
@@ -118,7 +132,7 @@
     --accent: #adcb36;
     --accent-hover: #cce85e;
     --border-color: #333;
-    --font-main: 'Visby CF', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-main: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --nav-height: 160px;
     --nav-height-scrolled: 100px;
     --transition-speed: 0.3s;
@@ -198,10 +212,24 @@ body.no-scroll {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 150%;
-    height: 150%;
     transform: translate(-50%, -50%);
     pointer-events: none;
+}
+
+@media (min-aspect-ratio: 16/9) {
+    #hero-bg iframe {
+        width: 100vw;
+        height: 56.25vw;
+        /* 100 * 9 / 16 */
+    }
+}
+
+@media (max-aspect-ratio: 16/9) {
+    #hero-bg iframe {
+        height: 100vh;
+        width: 177.78vh;
+        /* 100 * 16 / 9 */
+    }
 }
 
 /* Header & Nav */
@@ -764,11 +792,130 @@ header.scrolled .dropdown {
     z-index: 2;
 }
 
+
 .subpage-hero h1 {
     font-size: 3.5rem;
     color: #ffffff;
     font-weight: 700;
     margin-bottom: 1rem;
+}
+
+/* Partners Section */
+.partners-section {
+    padding: 80px 0;
+    /* Increased padding */
+    background-color: #f8f9fa;
+    /* Slightly off-white for subtle distinction */
+    overflow: hidden;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.partners-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.partners-header h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--bg-primary);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    opacity: 0.8;
+}
+
+.partners-header h3::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    margin: 15px auto 0;
+}
+
+.partners-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    max-width: 100%;
+}
+
+.partners-container::before,
+.partners-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.partners-container::before {
+    left: 0;
+    background: linear-gradient(to right, #f8f9fa, transparent);
+}
+
+.partners-container::after {
+    right: 0;
+    background: linear-gradient(to left, #f8f9fa, transparent);
+}
+
+.partners-track {
+    display: flex;
+    width: fit-content;
+    animation: scroll 60s linear infinite;
+    /* Slower, smoother scroll */
+    gap: 100px;
+    padding: 0 50px;
+    will-change: transform;
+}
+
+.partners-track:hover {
+    animation-play-state: paused;
+}
+
+.partner-logo {
+    height: 50px;
+    /* Slightly smaller for elegance */
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(100%) opacity(0.5);
+    transition: all 0.4s ease;
+    flex-shrink: 0;
+}
+
+.partner-logo:hover {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .partners-section {
+        padding: 50px 0;
+    }
+
+    .partners-track {
+        gap: 60px;
+        animation-duration: 40s;
+    }
+
+    .partner-logo {
+        height: 35px;
+    }
 }
 
 .subpage-hero p {
@@ -1406,11 +1553,12 @@ body.white-page .project-intro p {
 }
 
 .team-image {
-    height: 300px;
+    height: 340px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: #ddd;
+    transform: scale(1.02);
 }
 
 .team-info {
@@ -1533,9 +1681,10 @@ body.white-page .project-intro p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(1, 29, 73, 0.95);
+    background: rgba(1, 29, 73, 0.7);
     /* Slightly darker/blue tint similar to subpage hero */
     z-index: 1;
+    display: block;
 }
 
 .innovation-section.has-image .innovation-container {
@@ -2297,3 +2446,249 @@ body.white-page .blog-card p {
 }
 
 /* Additional image-placeholder overrides removed - main styles at line ~830 now handle all cases */
+
+/* Blog Filters */
+.blog-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--text-primary);
+    padding: 8px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-family: var(--font-main);
+}
+
+.white-page .filter-btn {
+    color: var(--bg-primary);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+/* Specs Table */
+.specs-table {
+    width: 100%;
+    max-width: 800px;
+    /* Or whatever fits your design */
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    /* Subtle shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    overflow: hidden;
+    /* For border radius */
+}
+
+.specs-table th,
+.specs-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.specs-table th {
+    background-color: var(--bg-primary);
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.specs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.specs-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+    /* Very light gray for zebra striping */
+}
+
+.specs-table tr:hover {
+    background-color: #f1f1f1;
+    /* Hover effect */
+    transition: background-color 0.2s ease;
+}
+
+.specs-table td:first-child {
+    font-weight: 600;
+    color: var(--bg-primary);
+    /* Highlight the label */
+    width: 40%;
+    /* Fixed width for labels */
+}
+
+.specs-table td:last-child {
+    color: #555;
+}
+
+/* Text Emphasis */
+.text-emphasis {
+    font-weight: 600;
+    color: var(--bg-primary);
+    /* Use primary color for emphasis */
+}
+
+/* Partners Section */
+.partners-section {
+    padding: 60px 0;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    position: relative;
+    border-top: 1px solid #eee;
+}
+
+.partners-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.partners-header h3 {
+    color: var(--bg-primary);
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.partners-header h3::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--accent);
+    margin: 15px auto 0;
+}
+
+.partners-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+
+.partners-track {
+    display: flex;
+    WIDTH: 100%;
+    /* Ensure container takes full width */
+    overflow: hidden;
+}
+
+.slide-track {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    animation: scroll 40s linear infinite;
+    flex-shrink: 0;
+    padding-right: 80px;
+    /* Ensure gap between last item of set 1 and first of set 2 */
+    width: max-content;
+    will-change: transform;
+}
+
+.partners-track:hover .slide-track {
+    animation-play-state: paused;
+}
+
+.partner-logo {
+    height: 80px;
+    /* Increased size */
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(100%) opacity(0.6);
+    transition: all 0.3s ease;
+}
+
+.partner-logo:hover {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Autocollimator Graphic Styles */
+.autocollimator-section {
+    padding: 80px 5%;
+    background-color: var(--bg-secondary);
+    display: flex;
+    justify-content: center;
+}
+
+.autocollimator-container {
+    position: relative;
+    background-color: #011D49;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    width: 1000px;
+    max-width: 100%;
+}
+
+.autocollimator-container canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.ac-controls {
+    padding: 25px;
+    background-color: #001538;
+    border-top: 1px solid #1a3a6e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.ac-controls label {
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #cce85e;
+}
+
+.ac-controls input[type=range] {
+    width: 300px;
+    cursor: pointer;
+    accent-color: #cce85e;
+    max-width: 100%;
+}
+
+.ac-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 310px;
+    font-size: 12px;
+    color: white;
+    font-weight: 300;
+    max-width: 100%;
+}

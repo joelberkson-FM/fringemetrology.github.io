@@ -121,4 +121,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     console.log("Fringe Metrology site loaded. Animations ready.");
+
+    // Blog Filtering
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const blogCards = document.querySelectorAll('.blog-card');
+
+    if (filterBtns.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active to clicked
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                blogCards.forEach(card => {
+                    const type = card.getAttribute('data-type');
+
+                    if (filter === 'all' || type === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    }
 });

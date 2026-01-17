@@ -1,8 +1,9 @@
 // Wrap in a function to allow valid reconfiguration or multiple instances if needed
-window.initAutocollimator = function (config = {}) {
+window.initSourceAutocollimator = function (config = {}) {
     const defaultIds = {
         canvasId: 'simCanvas',
-        sliderId: 'tiltSlider'
+        tiltSliderId: 'tiltSlider',
+        sourceSliderId: 'sourceSlider'
     };
 
     // Merge defaults
@@ -21,24 +22,30 @@ window.initAutocollimator = function (config = {}) {
     }
 
     const ctx = canvas.getContext('2d');
-    const slider = document.getElementById(cfg.sliderId);
+    const slider = document.getElementById(cfg.tiltSliderId);
+    const sourceSlider = document.getElementById(cfg.sourceSliderId);
 
-    // Safety check if slider is missing
-    if (!slider) {
-        console.warn("Autocollimator: Slider not found with ID", cfg.sliderId);
+    if (!slider || !sourceSlider) {
+        console.warn("Source Autocollimator: Sliders not found.", cfg);
         return;
     }
 
     // Add Reset Button
-    // We assume the slider is inside a .controls container.
-    const controls = slider.closest('.controls');
-    if (controls) {
-        ExperimentLib.addResetButton(controls, () => {
+    // We want it in the top-left of the main container
+    const container = canvas.closest('.container') || canvas.parentElement;
+    if (container) {
+        // Ensure container is relative for absolute positioning (it is in CSS, but safeguards help)
+        if (getComputedStyle(container).position === 'static') {
+            container.style.position = 'relative';
+        }
+
+        ExperimentLib.addResetButton(container, () => {
             slider.value = 0;
+            sourceSlider.value = 0;
             // dispatch input event so any listeners update (drawing logic)
             // or just call draw();
             draw();
-        });
+        }, { position: 'top-left' });
     }
 
     // --- Configuration ---
@@ -85,6 +92,14 @@ window.initAutocollimator = function (config = {}) {
         const angleDeg = parseFloat(slider.value);
         const angleRad = angleDeg * (Math.PI / 180);
 
+        const sourceXOffset = parseFloat(sourceSlider.value); // mm
+        // Physics: 
+        // 1. Source moves laterally by X.
+        // 2. Virtual source moves laterally by X.
+        // 3. Beam leaves collimator at angle theta = atan(X / f) relative to axis.
+        const beamAngle = Math.atan(sourceXOffset / objFocalLength);
+
+
         // --- 1. Draw Static Optical Components ---
 
         // Optical Axis
@@ -119,25 +134,29 @@ window.initAutocollimator = function (config = {}) {
         ctx.font = ExperimentLib.Fonts.Label;
         ctx.fillText("Beamsplitter", beamsplitterX - 45, centerY + 65);
 
-        // Source Point
-        ExperimentLib.drawStar(ctx, beamsplitterX, sourceY, 4, 6, 2, C_GREEN);
+        // Source Point (Physically moves)
+        const drawnSourceX = beamsplitterX + sourceXOffset;
+        ExperimentLib.drawStar(ctx, drawnSourceX, sourceY, 4, 6, 2, C_GREEN);
         ctx.fillStyle = C_WHITE;
         ctx.font = ExperimentLib.Fonts.Main;
-        ctx.fillText("Source Point", beamsplitterX - 45, sourceY - 15);
+        ctx.fillText("Source Point", drawnSourceX - 45, sourceY - 15);
 
         // --- 2. Ray Tracing: Outgoing (White) ---
         // Source -> Beamsplitter
         ctx.beginPath();
-        ctx.moveTo(beamsplitterX, sourceY);
+        ctx.moveTo(drawnSourceX, sourceY);
         // Hit points on Beamsplitter (Simulating beam width)
         const spread = 15;
+
         const bsTopX = beamsplitterX - spread;
         const bsTopY = centerY - spread;
         const bsBotX = beamsplitterX + spread;
         const bsBotY = centerY + spread;
 
+        // Actually, let's just make the rays go from source to the "Lens Aperture" equivalent at the BS
+        // This is a schematic.
         ctx.lineTo(bsTopX, bsTopY);
-        ctx.moveTo(beamsplitterX, sourceY);
+        ctx.moveTo(drawnSourceX, sourceY);
         ctx.lineTo(bsBotX, bsBotY);
         ctx.strokeStyle = C_WHITE;
         ctx.lineWidth = 1;
@@ -150,11 +169,23 @@ window.initAutocollimator = function (config = {}) {
         ExperimentLib.drawRay(ctx, bsTopX, bsTopY, objectiveX, objTopY, C_WHITE);
         ExperimentLib.drawRay(ctx, bsBotX, bsBotY, objectiveX, objBotY, C_WHITE);
 
-        // Objective -> Mirror (Parallel)
-        // Adjust mirror hit points based on tilt to keep lines visually clean
-        // (Visual trick: we draw to a vertical line at mirrorX, ignoring slight depth change from tilt)
-        ExperimentLib.drawRay(ctx, objectiveX, objTopY, mirrorX, objTopY, C_WHITE);
-        ExperimentLib.drawRay(ctx, objectiveX, objBotY, mirrorX, objBotY, C_WHITE);
+        // Objective -> Mirror (Collimated Beam)
+        // If source is offset, beam is NOT parallel to axis. It has angle `beamAngle`.
+        // Top ray starts at (objectiveX, objTopY) and goes at angle `beamAngle`.
+        // y - y0 = m(x - x0). m = tan(beamAngle).
+        // At mirrorX: y = objTopY + tan(beamAngle) * (mirrorX - objectiveX)
+
+        const distObjMirror = mirrorX - objectiveX;
+
+        // RE-CALCULATING BEAM ANGLE LOCALLY FOR CLARITY
+        // +X offset -> Ray goes "Up" (Negative Angle) assuming Center of Lens is pivot.
+        const rayAngle = Math.atan(-sourceXOffset / objFocalLength);
+
+        const mirTopY = objTopY + (distObjMirror * Math.tan(rayAngle));
+        const mirBotY = objBotY + (distObjMirror * Math.tan(rayAngle));
+
+        ExperimentLib.drawRay(ctx, objectiveX, objTopY, mirrorX, mirTopY, C_WHITE);
+        ExperimentLib.drawRay(ctx, objectiveX, objBotY, mirrorX, mirBotY, C_WHITE);
 
         // --- 3. Mirror Component ---
         ctx.save();
@@ -172,25 +203,36 @@ window.initAutocollimator = function (config = {}) {
 
 
         // --- 4. Return Rays (Green) ---
-        // Logic: The mirror is tilted by alpha. The reflected ray is tilted by 2*alpha.
-        const reflectAngle = 2 * angleRad;
+        // Incoming Ray Angle: rayAngle
+        // Mirror Tilt: angleRad
+        // Reflected Ray Angle: 
+        // If mirror is flat (0), reflected angle = -incident angle (relative to normal).
+        // Incident Ray relative to optical axis: rayAngle.
+        // Normal relative to optical axis: -angleRad (Mirror tilted by angleRad).
+        // Deviation = 2 * (angleRad - rayAngle).
+
+        const reflectedAngle = 2 * angleRad - rayAngle;
 
         // Calculate where rays hit the Objective on return
-        // Distance from mirror to objective
-        const distToObj = mirrorX - objectiveX;
+        // Start from the points where they hit the mirror: (mirrorX, mirTopY) and (mirrorX, mirBotY).
+        // They travel at `reflectedAngle` back to Objective.
+        // Delta X = objectiveX - mirrorX (Negative).
+        // Delta Y = Delta X * tan(reflectedAngle).
 
-        // The return rays are parallel to each other, but angled relative to optical axis
-        const retTopY = objTopY - (distToObj * Math.tan(reflectAngle));
-        const retBotY = objBotY - (distToObj * Math.tan(reflectAngle));
+        // Return Hit Y (top ray)
+        const retTopY = mirTopY + (objectiveX - mirrorX) * Math.tan(reflectedAngle);
+        const retBotY = mirBotY + (objectiveX - mirrorX) * Math.tan(reflectedAngle);
 
         // 4a. Mirror -> Objective
-        ExperimentLib.drawRay(ctx, mirrorX, objTopY, objectiveX, retTopY, C_GREEN);
-        ExperimentLib.drawRay(ctx, mirrorX, objBotY, objectiveX, retBotY, C_GREEN);
+        ExperimentLib.drawRay(ctx, mirrorX, mirTopY, objectiveX, retTopY, C_GREEN);
+        ExperimentLib.drawRay(ctx, mirrorX, mirBotY, objectiveX, retBotY, C_GREEN);
 
         // 4b. Objective -> Reticle (Focus)
-        // Rays focused by objective meet at the focal plane (Reticle X)
-        // Height h = f * tan(theta)
-        const h = objFocalLength * Math.tan(reflectAngle);
+        // Rays focused by objective meet at the focal plane (Reticle X).
+        // Height h = f * tan(theta_in). 
+        // Here theta_in = reflectedAngle.
+        // So h = f * tan(reflectedAngle).
+        const h = objFocalLength * Math.tan(reflectedAngle);
         const focusPointY = centerY + h;
 
         ctx.beginPath();
@@ -308,6 +350,7 @@ window.initAutocollimator = function (config = {}) {
     }
 
     slider.addEventListener('input', draw);
+    sourceSlider.addEventListener('input', draw);
     window.addEventListener('resize', draw);
 
     // Initial draw
@@ -315,8 +358,10 @@ window.initAutocollimator = function (config = {}) {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Only auto-init if we are NOT on a page that handles it manually, 
-    // OR just try to init with defaults and fail gracefully if elements missing.
-    // If the elements exist, this will attach.
-    window.initAutocollimator();
+    // Only auto-init if we are NOT on a page that handles it manually.
+    // However, if both scripts are loaded, we need to be careful.
+    // For now, let's assume if the default elements exist, we init.
+    // BUT since we are using unique IDs on the new page, this shouldn't fire there.
+    // It WILL fire on `test.html` which is good.
+    window.initSourceAutocollimator();
 });

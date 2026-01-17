@@ -162,19 +162,40 @@
             </div>
         </section>
 
-        <!-- Autocollimator Graphic Section -->
+        <!-- Source Position Experiment Section -->
         <section class="autocollimator-section">
             <div class="autocollimator-container">
-                <canvas id="simCanvas" width="1000" height="480"></canvas>
+                <canvas id="sourceCanvas" width="1000" height="480"></canvas>
                 <div class="ac-controls">
-                    <label for="tiltSlider">Mirror Tilt</label>
-                    <input type="range" id="tiltSlider" min="-3" max="3" step="0.05" value="0">
+                    <label for="sourceTiltSlider">Mirror Tilt</label>
+                    <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.05" value="0">
+
+                    <label for="sourcePosSlider">Source Point Position</label>
+                    <input type="range" id="sourcePosSlider" min="-10" max="10" step="0.1" value="0">
                 </div>
             </div>
         </section>
 
         <script src="js/experiment-shared.js"></script>
         <script src="js/autocollimator.js"></script>
+        <script src="js/autocollimator-source.js"></script>
+
+        <script>
+            // Initialize both experiments
+            document.addEventListener('DOMContentLoaded', () => {
+                // Experiment 1: Standard (Default IDs match, so it might auto-init, but let's be explicit and safe)
+                // Note: The script might have auto-initialized if it found 'simCanvas'. 
+                // We'll rely on that for the first one or re-init if needed.
+                // But specifically for the SECOND one, we must manually init.
+
+                window.initSourceAutocollimator({
+                    canvasId: 'sourceCanvas',
+                    tiltSliderId: 'sourceTiltSlider',
+                    sourceSliderId: 'sourcePosSlider'
+                });
+            });
+        </script>
+
         <section class="contact-cta-section">
             <div class="contact-cta-container">
                 <h2>Interested?</h2>

@@ -4,71 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autocollimator Simulation</title>
+    <title>Autocollimator Source Experiment Test</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@1,700&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 20px;
-            background-color: #000;
-            font-family: 'Montserrat', sans-serif;
+            background-color: #011D49;
             color: white;
+            font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
         }
 
         .container {
+            width: 100%;
+            /* Ensure container takes full width if needed */
+            max-width: 1000px;
+            padding: 20px;
+            /* Positioning context for absolute elements like reset button */
             position: relative;
-            background-color: #011D49;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .autocollimator-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            width: 1000px;
-            /* Widened slightly to fit new component */
-            max-width: 100%;
+            padding: 20px;
         }
 
         canvas {
-            display: block;
+            background-color: #011D49;
+            width: 100%;
+            height: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .controls {
-            padding: 25px;
-            background-color: #001538;
-            border-top: 1px solid #1a3a6e;
+        .ac-controls {
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 15px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         label {
             font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 12px;
-            color: #cce85e;
         }
 
-        input[type=range] {
-            width: 300px;
-            cursor: pointer;
-            accent-color: #cce85e;
-        }
-
-        .labels {
-            display: flex;
-            justify-content: space-between;
-            width: 310px;
-            font-size: 12px;
-            color: white;
-            font-weight: 300;
+        input[type="range"] {
+            width: 100%;
         }
     </style>
 </head>
@@ -76,21 +73,41 @@
 <body>
 
     <div class="container">
-        <canvas id="simCanvas" width="1000" height="480"></canvas>
+        <h1>Source Autocollimator Experiment</h1>
 
-        <div class="controls">
-            <label for="tiltSlider">Mirror Tilt</label>
-            <input type="range" id="tiltSlider" min="-3" max="3" step="0.05" value="0">
+        <div class="autocollimator-container">
+            <!-- Canvas ID matches what we'll pass to init -->
+            <canvas id="sourceCanvas" width="1000" height="480"></canvas>
 
-            <label for="sourceSlider">Source Position</label>
-            <input type="range" id="sourceSlider" min="-10" max="10" step="0.1" value="0">
+            <div class="ac-controls">
+                <div>
+                    <label for="sourceTiltSlider">Mirror Tilt</label>
+                    <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.05" value="0">
+                </div>
+
+                <div>
+                    <label for="sourcePosSlider">Source Point Position</label>
+                    <input type="range" id="sourcePosSlider" min="-10" max="10" step="0.1" value="0">
+                </div>
+            </div>
         </div>
     </div>
 
-    </div>
-
+    <!-- Dependencies -->
     <script src="js/experiment-shared.js"></script>
     <script src="js/autocollimator-source.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the experiment with specific IDs
+            window.initSourceAutocollimator({
+                canvasId: 'sourceCanvas',
+                tiltSliderId: 'sourceTiltSlider',
+                sourceSliderId: 'sourcePosSlider'
+            });
+        });
+    </script>
+
 </body>
 
 </html>

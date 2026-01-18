@@ -112,66 +112,204 @@
             </div>
         </section>
 
-        <section class="features-section theme-light">
-            <!-- Row 1: Text | Image -->
-            <div class="feature-row right">
-                <div class="feature-text-column">
-                    <div>
-                        <h3>What is SLA?</h3>
-                        <p>Structured Light Autocollimation (SLA) is a fundamentally new class of surface metrology.
-                            Rooted in the 100-year-old principle of autocollimation, SLA evolves this proven optical
-                            method into a fully digital, high-resolution measurement platform.</p>
-                    </div>
-                </div>
-                <div class="feature-icon-column">
-                    <div class="image-placeholder"><img src="imgs/sla_what_is_sla.gif" alt="sla_what_is_sla.jpg"></div>
-                </div>
-            </div>
+        <section class="full-width-section theme-light">
+            <div class="content-container">
+                <h3>What is a Structured Light
+                    Autocollimator (SLA)?</h3>
+                <p>
+                    Structured Light Autocollimation (SLA) is a fundamentally new class of surface metrology.
+                    Rooted in the 100-year-old principle of autocollimation, SLA evolves this proven optical
+                    method into a fully digital, high-resolution measurement platform.
+                </p>
 
-            <!-- Row 2: Image | Text -->
-            <div class="feature-row left">
-                <div class="feature-icon-column">
-                    <div class="image-placeholder"><img src="imgs/sla_conventional_metrology_limits.gif"
-                            alt="sla_conventional_metrology_limits.jpg"></div>
-                </div>
-                <div class="feature-text-column">
-                    <div>
-                        <h3>The Limits of Conventional Metrology</h3>
-                        <p>Interferometers are precise but fragile, defect inspection tools can flag issues but offer
-                            poor visualization and no slope or shape, and production systems sacrifice sensitivity for
-                            stability. No existing tool captures slope, shape, and defects in a single measurement.</p>
-                    </div>
-                </div>
-            </div>
+                <!-- Desktop Content: Experiment -->
+                <div class="desktop-only">
+                    <p>
+                        At its core, the autocollimator is a slope measurement system, that measures the average slope
+                        over an optic. The old systems were completely analog, with a simple reticle and eye for
+                        measuring the surface slope. See the below tool, the spot shifts as the mirror tilts. Also note
+                        if the source point is moved, the spot also shifts.
+                    </p>
+                    <br>
+                    <div class="autocollimator-container">
+                        <canvas id="sourceCanvas" width="1000" height="480"></canvas>
+                        <div class="ac-controls">
+                            <label for="sourceTiltSlider">Mirror Tilt</label>
+                            <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.05" value="0">
 
-            <!-- Row 3: Text | Image -->
-            <div class="feature-row right">
-                <div class="feature-text-column">
-                    <div>
-                        <h3>One Measurement, Full Understanding</h3>
-                        <p>SLA captures slope, shape, and defects together in a single measurement — something no
-                            conventional tool has ever been able to do. It combines interferometric precision, robust
-                            acquisition, and intuitive surface visualization, delivering clear, actionable insight
-                            across subtle features and large-scale form in the same shot.</p>
+                            <label for="sourcePosSlider">Source Point Position</label>
+                            <input type="range" id="sourcePosSlider" min="-10" max="10" step="0.1" value="0">
+                        </div>
                     </div>
+                    <br>
+                    <p>
+                        We make two key changes to a standard autocollimator layout: we replace the point source with an
+                        extended source, specifically a display, and a replace the reticle with an aperture stop,
+                        restricting the rays that enter the system to only chief rays.
+                    </p>
+                    <p>
+                        In the below tool, we have the same perfect mirror from the previous tool, but we are using
+                        a display as the source. By changing the active pixel on the display, we can measure the
+                        slope of the mirror.
+                    </p>
+                    <br>
+                    <div class="autocollimator-container">
+                        <canvas id="slaCanvas" width="1000" height="480"></canvas>
+                        <div class="ac-controls">
+                            <label for="slaTiltSlider">Mirror Tilt</label>
+                            <input type="range" id="slaTiltSlider" min="-3" max="3" step="0.05" value="0">
+
+                            <label for="slaSourceSlider">Active Pixel Position</label>
+                            <input type="range" id="slaSourceSlider" min="-10" max="10" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <br>
+                    <p>
+                        Instead of just sending a single pixel at a time, we can send a structured pattern (fringes)
+                        with our micro display. Using the same math as phase-shifting interferometers, we convert images
+                        of the reflected phase shifted pattern to phase, then directly to slope. Because of this unique
+                        layout, each pixel on the sensor measures an isolated x slope and y slope.
+                    </p>
                 </div>
-                <div class="feature-icon-column">
-                    <div class="image-placeholder"><img src="imgs/sla_full_understanding.gif"
-                            alt="sla_full_understanding.jpg"></div>
+
+                <!-- Mobile Content: GIF -->
+                <div class="mobile-only">
+                    <div class="image-placeholder mobile-placeholder">
+                        <img src="imgs/sla_what_is_sla.gif" alt="What is SLA">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Source Position Experiment Section -->
-        <section class="autocollimator-section">
-            <div class="autocollimator-container">
-                <canvas id="sourceCanvas" width="1000" height="480"></canvas>
-                <div class="ac-controls">
-                    <label for="sourceTiltSlider">Mirror Tilt</label>
-                    <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.05" value="0">
+        <!-- Limits of Conventional Metrology Section -->
+        <section class="features-section theme-light white-section" style="padding-top: 0;">
+            <div class="content-container">
+                <h3>The Limits of Conventional Metrology</h3>
+                <p>
+                    Interferometers are precise but fragile, defect inspection tools can flag issues but offer
+                    poor visualization and no slope or shape, and production systems sacrifice sensitivity for
+                    stability. No existing tool captures slope, shape, and defects in a single measurement.
+                </p>
 
-                    <label for="sourcePosSlider">Source Point Position</label>
-                    <input type="range" id="sourcePosSlider" min="-10" max="10" step="0.1" value="0">
+                <!-- Desktop Content: Tradeoffs Diagram -->
+                <div class="desktop-only">
+                    <div class="diagram-container">
+                        <svg viewBox="-200 0 1200 600">
+
+                            <!-- DEFINITIONS -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5"
+                                    orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#011D49" />
+                                </marker>
+                            </defs>
+
+                            <!-- AXIS TRIANGLE -->
+                            <polygon points="100,500 400,90 700,500" class="axis-line" stroke-linejoin="round"
+                                stroke="#011D49" />
+
+                            <!-- AXIS LABELS -->
+                            <text x="400" y="70" class="main-label">
+                                <tspan x="400" dy="0">Sensitivity/Precision</tspan>
+                            </text>
+                            <text x="80" y="500" class="main-label" style="text-anchor: end;">
+                                <tspan x="90" dy="0">Dynamic Range</tspan>
+                            </text>
+                            <text x="710" y="500" class="main-label" style="text-anchor: start;">Throughput</text>
+
+                            <!-- INTERACTIVE SHAPES -->
+
+                            <!-- 1. Contact Profilometry (Left Diagonal) -->
+                            <g class="tech-group">
+                                <ellipse cx="300" cy="300" rx="60" ry="180" transform="rotate(30 280 350)"
+                                    class="tech-shape" />
+
+                                <text x="180" y="300" class="tech-title">
+                                    <tspan x="150" dy="0">Contact</tspan>
+                                    <tspan x="150" dy="20">Profilometry</tspan>
+                                </text>
+                                <text x="150" y="340" class="tech-desc">
+                                    <tspan x="150" dy="0">AFM, Stylus, etc.</tspan>
+                                </text>
+                            </g>
+
+                            <!-- 2. Interferometric Methods (Right Diagonal) -->
+                            <g class="tech-group">
+                                <ellipse cx="500" cy="300" rx="60" ry="180" transform="rotate(-30 520 350)"
+                                    class="tech-shape" />
+
+                                <text x="600" y="300" class="tech-title">
+                                    <tspan x="650" dy="0">Interferometric</tspan>
+                                    <tspan x="650" dy="20">Methods</tspan>
+                                </text>
+                                <text x="600" y="340" class="tech-desc">
+                                    <tspan x="650" dy="0">Fizeau, WLI, etc.</tspan>
+                                </text>
+                            </g>
+
+                            <!-- 3. Optical Profilometry (Center Top) -->
+                            <g class="tech-group" id="optical-group">
+                                <ellipse cx="400" cy="300" rx="90" ry="70" class="tech-shape" />
+
+                                <text x="250" y="200" class="tech-title">
+                                    <tspan x="220" dy="0">Optical</tspan>
+                                    <tspan x="220" dy="20">Profilometry</tspan>
+                                </text>
+                                <text x="250" y="240" class="tech-desc">
+                                    <tspan x="220" dy="0">Confocal, flying spot</tspan>
+                                </text>
+                            </g>
+
+                            <!-- 4. The "?" (Bottom Center) -->
+                            <g class="tech-group">
+                                <circle cx="400" cy="420" r="60" class="tech-shape" />
+
+                                <text x="400" y="530" class="tech-title">
+                                    <tspan x="400" dy="0">Structured Light</tspan>
+                                    <tspan x="400" dy="20">Autocollimator</tspan>
+                                </text>
+                                <text x="400" y="570" class="tech-desc">
+                                    <tspan x="400" dy="0">SLA</tspan>
+                                </text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Mobile Content: GIF -->
+                <div class="mobile-only">
+                    <div class="image-placeholder mobile-placeholder">
+                        <img src="imgs/sla_conventional_metrology_limits.gif" alt="Conventional Metrology Limits">
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+
+        <!-- One Measurement, Full Understanding Section -->
+        <section class="features-section theme-light white-section">
+            <div class="content-container">
+                <h3>One Measurement, Full Understanding</h3>
+                <p>
+                    SLA captures slope, shape, and defects together in a single measurement — something no
+                    conventional tool has ever been able to do. It combines interferometric precision, robust
+                    acquisition, and intuitive surface visualization, delivering clear, actionable insight
+                    across subtle features and large-scale form in the same shot.
+                </p>
+                <div class="image-row-container">
+                    <div class="image-item">
+                        <img src="imgs/sla_raw.png" alt="Raw Data">
+                        <p class="image-label">Raw Data</p>
+                    </div>
+                    <div class="image-item">
+                        <img src="imgs/sla_best_fit.png" alt="Best Fit">
+                        <p class="image-label">Best Fit</p>
+                    </div>
+                    <div class="image-item">
+                        <img src="imgs/sla_zoom.png" alt="Zoom">
+                        <p class="image-label">Zoom</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -179,6 +317,8 @@
         <script src="js/experiment-shared.js"></script>
         <script src="js/autocollimator.js"></script>
         <script src="js/autocollimator-source.js"></script>
+        <script src="js/autocollimator-sla.js"></script>
+        <script src="js/autocollimator-sla.js"></script>
 
         <script>
             // Initialize both experiments
@@ -192,6 +332,13 @@
                     canvasId: 'sourceCanvas',
                     tiltSliderId: 'sourceTiltSlider',
                     sourceSliderId: 'sourcePosSlider'
+                });
+
+                // Experiment 2: SLA Autocollimator
+                window.initSLAAutocollimator({
+                    canvasId: 'slaCanvas',
+                    tiltSliderId: 'slaTiltSlider',
+                    sourceSliderId: 'slaSourceSlider'
                 });
             });
         </script>

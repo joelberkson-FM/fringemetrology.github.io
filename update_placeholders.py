@@ -421,7 +421,7 @@ def update_partners_section(html_content, available_images):
     # Generate images HTML
     images_html = ""
     for _, filename in logo_images:
-        images_html += f'<img src="imgs/{filename}" alt="Partner Logo" class="partner-logo" loading="lazy">\n'
+        images_html += f'<img src="imgs/{filename}" alt="Partner Logo" class="partner-logo">\n'
     
     # Create a base set that is long enough to likely fill a screen width
     # Assuming avg logo width + gap ~ 200px. 1920px screen ~ 10 logos.
@@ -430,7 +430,7 @@ def update_partners_section(html_content, available_images):
     count = base_set.count('<img')
     
     # Repeat until we have at least 15 items in the base set to be safe
-    while base_set.count('<img') < 15:
+    while base_set.count('<img') < 40:
         base_set += images_html
         
     new_section_content = f"""

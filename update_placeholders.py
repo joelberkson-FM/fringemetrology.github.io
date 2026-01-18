@@ -453,7 +453,7 @@ def update_partners_section(html_content, available_images):
 def update_html_file(html_path, available_images, dry_run=False, update_common=True):
     """Update placeholders and common elements in a single HTML file."""
     if not html_path.exists():
-        return [], [], []
+        return [], [], [], []
     
     with open(html_path, 'r', encoding='utf-8') as f:
         content = f.read()

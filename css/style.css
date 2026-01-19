@@ -2868,3 +2868,13 @@ body.white-page .blog-card p {
         gap: 40px;
     }
 }
+
+/* Override feature text colors when inside innovation-section (dark background) */
+.innovation-section .feature-text-column h3 {
+    color: #ffffff;
+}
+
+.innovation-section .feature-text-column p,
+.innovation-section .feature-text-column ul {
+    color: rgba(255, 255, 255, 0.9);
+}

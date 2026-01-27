@@ -44,6 +44,7 @@ window.initSLAAutocollimator = function (config = {}) {
             sourceSlider.value = 0;
             // dispatch input event so any listeners update (drawing logic)
             // or just call draw();
+            updateDisplays();
             draw();
         }, { position: 'top-left' });
     }
@@ -163,7 +164,7 @@ window.initSLAAutocollimator = function (config = {}) {
         // Draw a small rectangle for the display (Stationary)
         ctx.fillStyle = "#000000ff";
         // Fixed at beamsplitterX
-        ctx.fillRect(beamsplitterX - 25, sourceY - 4, 50, 8);
+        ctx.fillRect(beamsplitterX - 45, sourceY - 4, 90, 8);
 
         // Draw the "active pixel" (Moves with drawnSourceX)
         ctx.fillStyle = C_GREEN;
@@ -290,16 +291,7 @@ window.initSLAAutocollimator = function (config = {}) {
 
         // --- 5. Annotations (Dashed Lines & Labels) ---
 
-        // Draw the 2alpha angle indication
-        if (Math.abs(angleDeg) > 1) {
-            ctx.beginPath();
-            ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = ExperimentLib.Colors.ANNOTATION;
-            // Dashed line continuing straight from objective
-            ctx.moveTo(objectiveX, objTopY);
-            ctx.lineTo(objectiveX + 150, objTopY);
-            ctx.stroke();
-        }
+
 
         // --- 6. Annotations (Dashed Lines & Labels) --- (End of drawing)
 
@@ -320,18 +312,25 @@ window.initSLAAutocollimator = function (config = {}) {
         const viewW = 80;
         const viewH = 60;
 
-        // Draw Box
-        ctx.strokeStyle = C_WHITE;
+        // 1. Fill Background (Always start with Black/Dark)
+        // This ensures "when not aligned, I want the Sensor view to always show as a dark rectangle"
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(viewX - viewW / 2, viewY - viewH / 2, viewW, viewH);
+
+        // 2. If Hit, Fill with White
+        // "This touches the sensor but I don't see the white sensor view"
+        if (isHit) {
+            ctx.fillStyle = "#FFFFFF"; // Explicit White
+            ctx.fillRect(viewX - viewW / 2, viewY - viewH / 2, viewW, viewH);
+        }
+
+        // 3. Draw Box Outline
+        ctx.strokeStyle = "#FFFFFF";
         ctx.lineWidth = 2;
         ctx.strokeRect(viewX - viewW / 2, viewY - viewH / 2, viewW, viewH);
 
-        // Fill based on hit
-        ctx.fillStyle = isHit ? C_WHITE : "#000000";
-        // Fill properly inside stroke
-        ctx.fillRect(viewX - viewW / 2 + 1, viewY - viewH / 2 + 1, viewW - 2, viewH - 2);
-
-        // Label
-        ctx.fillStyle = C_WHITE;
+        // 4. Label
+        ctx.fillStyle = "#FFFFFF";
         ctx.font = ExperimentLib.Fonts.Main;
         ctx.textAlign = "center";
 
@@ -341,11 +340,118 @@ window.initSLAAutocollimator = function (config = {}) {
 
 
 
-    slider.addEventListener('input', draw);
-    sourceSlider.addEventListener('input', draw);
+    function updateDisplays() {
+        if (cfg.tiltDisplayId) {
+            const el = document.getElementById(cfg.tiltDisplayId);
+            if (el) el.textContent = parseFloat(slider.value).toFixed(2) + "°";
+        }
+        if (cfg.sourceDisplayId) {
+            const el = document.getElementById(cfg.sourceDisplayId);
+            if (el) el.textContent = parseFloat(sourceSlider.value).toFixed(1) + " px";
+        }
+    }
+
+    // --- Coupling Logic ---
+    // Goal: 1 counter acts the other to stay aligned.
+    // Alignment Condition: Ray hits the reticle/aperture center.
+    // Ray Angle from source: alpha = atan(x / f)
+    // Reflected Angle: beta = 2*theta - alpha
+    // For alignment (return to source/center), beta should be ~0 (or specifically such that it hits the aperture center).
+    // Actually, for it to hit the center of the aperture (which is the source conjugate), 
+    // the return ray must exhibit a specific angle.
+    // Simpler View:
+    // The "Null" condition for an autocollimator: The return beam angle matches the source beam angle? 
+    // No, standard autocollimator: 
+    // Source at focus. Ray collimated. Hits mirror at angle theta. Reflected ray angle 2*theta.
+    // Focuses at displacement d = f * tan(2*theta).
+    // To "counteract" and "stay aligned" (implying the spot stays on the specific sensor pixel? or center?),
+    // If we want the beam to pass through the Aperture (which is at the center, dx=0),
+    // then the return ray must be on-axis (angle 0) or hit the specific aperture gap.
+    //
+    // Let's assume "aligned" means the return spot hits the center of the aperture (ReticleX).
+    // Return Height h = f * tan(2*theta - alpha).
+    // We want h = 0.
+    // => 2*theta - alpha = 0
+    // => alpha = 2*theta
+    // => atan(sourceX / f) = 2*theta
+    // => sourceX = f * tan(2*theta)
+    // Note: Directionality. 
+    // In our coord system:
+    // Forward ray angle: rayAngle = atan(-sourceX / f). (Note the negative in original code because pos X is down?)
+    // Let's check original code: const rayAngle = Math.atan(-sourceXOffset / objFocalLength);
+    // Reflected: const reflectedAngle = 2 * angleRad - rayAngle;
+    // For alignment (hitting center), we want Refl Angle = 0 (assuming paraxial / center aperture).
+    // 0 = 2*theta - rayAngle
+    // rayAngle = 2*theta
+    // rayAngle = atan(-x / f)
+    // -x/f = tan(2*theta) -> x = -f * tan(2*theta)
+    // Note: Math.tan(-2*theta) is same as -tan(2*theta)
+
+    function updateFromTilt() {
+        if (cfg.autoAlignCheckboxId) {
+            const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+            if (autoAlign && autoAlign.checked) {
+                const angleRad = parseFloat(slider.value) * (Math.PI / 180);
+                // Condition for alignment: Reflected Ray Angle = 0
+                // 0 = 2*theta - rayAngle
+                // rayAngle = 2*theta
+                // rayAngle = atan(-x / f)
+                // -x/f = tan(2*theta) -> x = -f * tan(2*theta)
+                // Note: Math.tan(-2*theta) is same as -tan(2*theta)
+                let targetSourceX = objFocalLength * Math.tan(-2 * angleRad);
+
+                // Clamp to slider range
+                const min = parseFloat(sourceSlider.min);
+                const max = parseFloat(sourceSlider.max);
+                if (targetSourceX < min) targetSourceX = min;
+                if (targetSourceX > max) targetSourceX = max;
+
+                sourceSlider.value = targetSourceX;
+            }
+        }
+        updateDisplays();
+        draw();
+    }
+
+    function updateFromSource() {
+        if (cfg.autoAlignCheckboxId) {
+            const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+            if (autoAlign && autoAlign.checked) {
+                const sourceX = parseFloat(sourceSlider.value);
+                // rayAngle = atan(-x/f)
+                // 2*theta = rayAngle
+                // theta = 0.5 * atan(-x/f)
+
+                let targetThetaRad = 0.5 * Math.atan(-sourceX / objFocalLength);
+                let targetThetaDeg = targetThetaRad * (180 / Math.PI);
+
+                // Clamp
+                const min = parseFloat(slider.min);
+                const max = parseFloat(slider.max);
+                if (targetThetaDeg < min) targetThetaDeg = min;
+                if (targetThetaDeg > max) targetThetaDeg = max;
+
+                slider.value = targetThetaDeg;
+            }
+        }
+        updateDisplays();
+        draw();
+    }
+
+    slider.addEventListener('input', updateFromTilt);
+    sourceSlider.addEventListener('input', updateFromSource);
+
+    if (cfg.autoAlignCheckboxId) {
+        const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+        if (autoAlign) {
+            autoAlign.addEventListener('change', updateFromTilt);
+        }
+    }
+
     window.addEventListener('resize', draw);
 
-    // Initial draw
+    // Initial update
+    updateDisplays();
     draw();
 };
 

@@ -21,21 +21,7 @@ from pathlib import Path
 # Configuration
 SCRIPT_DIR = Path(__file__).parent
 IMGS_DIR = SCRIPT_DIR / "imgs"
-HTML_FILES = [
-    "index.html",
-    "fringescan.html",
-    "fringeshot.html",
-    "projection.html",
-    "structured-light.html",
-    "about.html",
-    "blog.html",
-    "contact.html",
-    "history.html",
-    "team.html",
-    "template.html",
-    "terms.html",
-    "privacy.html",
-]
+HTML_FILES = [] # Will be populated dynamically
 
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'}
 
@@ -247,8 +233,8 @@ STANDARD_HEADER_INDEX = """    <header>
 # Standard header HTML (for blog/ pages - uses relative paths)
 STANDARD_HEADER_BLOG = """    <header class="scrolled">
         <div class="logo-container">
-            <a href="index.html" class="logo-link">
-                <img src="imgs/color.png" alt="Fringe Metrology Logo" class="logo-img">
+            <a href="../index.html" class="logo-link">
+                <img src="../imgs/color.png" alt="Fringe Metrology Logo" class="logo-img">
                 <span class="logo-text">Fringe Metrology</span>
             </a>
         </div>
@@ -259,8 +245,8 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                     <div class="dropdown">
                         <div class="dropdown-content">
                             <div class="dropdown-featured">
-                                <a href="fringescan.html" class="featured-card">
-                                    <div class="card-image" style="background-image: url('imgs/fringescan.gif')"></div>
+                                <a href="../fringescan.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('../imgs/fringescan.gif')"></div>
                                     <div class="card-text">
                                         <h4>FringeScan</h4>
                                         <p>High precision, large area surface scanning<svg class="arrow-right"
@@ -272,8 +258,8 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                                             </svg></p>
                                     </div>
                                 </a>
-                                <a href="fringeshot.html" class="featured-card">
-                                    <div class="card-image" style="background-image: url('imgs/16mm_fringeshot.jpg')">
+                                <a href="../fringeshot.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('../imgs/16mm_fringeshot.jpg')">
                                     </div>
                                     <div class="card-text">
                                         <h4>FringeShot</h4>
@@ -294,8 +280,8 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                     <div class="dropdown">
                         <div class="dropdown-content">
                             <div class="dropdown-featured">
-                                <a href="projection.html" class="featured-card">
-                                    <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
+                                <a href="../projection.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('../imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
                                         <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
@@ -306,8 +292,8 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                                             </svg></p>
                                     </div>
                                 </a>
-                                <a href="structured-light.html" class="featured-card">
-                                    <div class="card-image" style="background-image: url('imgs/chips.png')"></div>
+                                <a href="../structured-light.html" class="featured-card">
+                                    <div class="card-image" style="background-image: url('../imgs/chips.png')"></div>
                                     <div class="card-text">
                                         <h4>Structured Light Autocollimator</h4>
                                         <p>Ultra precision, small surface <svg class="arrow-right" width="12"
@@ -322,9 +308,9 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
                         </div>
                     </div>
                 </li>
-                <li class="nav-item"><a href="about.html">About Us</a></li>
-                <li class="nav-item"><a href="blog.html">Blog</a></li>
-                <li class="nav-item"><a href="contact.html">Contact Us</a></li>
+                <li class="nav-item"><a href="../about.html">About Us</a></li>
+                <li class="nav-item"><a href="../blog.html">Blog</a></li>
+                <li class="nav-item"><a href="../contact.html">Contact Us</a></li>
             </ul>
         </nav>
         <button class="mobile-nav-toggle" aria-label="Toggle navigation">
@@ -465,8 +451,13 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
     conversion_updates = []
     partner_updates = []
     
-    is_blog = 'blog' in str(html_path)
+    is_blog = 'blog' in str(html_path) and html_path.name != 'template.html'
     is_index = html_path.name == 'index.html' and not is_blog
+    
+    # Special handling for blog template: it lives in blog/ but is used to generate root pages
+    # so it needs root-relative paths (no ../)
+    if html_path.parent.name == 'blog' and html_path.name == 'template.html':
+        is_blog = False
     
     # First, convert any existing background-image placeholders to img tags
     content, converted = convert_background_to_img(content)
@@ -496,7 +487,7 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
         if matched_image:
             # Determine the relative path to imgs folder
             if is_blog:
-                img_path = f"imgs/{matched_image}"
+                img_path = f"../imgs/{matched_image}"
             else:
                 img_path = f"imgs/{matched_image}"
             
@@ -568,8 +559,19 @@ def main():
     all_conversion_updates = []
     all_partner_updates = []
     
-    for html_file in HTML_FILES:
-        html_path = SCRIPT_DIR / html_file
+    # Populate HTML_FILES dynamically
+    print("Scanning for HTML files...")
+    html_files_found = []
+    
+    # Scan root directory
+    for file_path in SCRIPT_DIR.glob("*.html"):
+        if file_path.name == "blog.html": # handled by build_blog.py mostly, but we might want to update common elements
+            pass 
+        html_files_found.append(file_path)
+        
+    print(f"Found {len(html_files_found)} HTML files in root.")
+
+    for html_path in html_files_found:
         placeholder_updates, common_updates, conversion_updates, partner_updates = update_html_file(
             html_path, available_images, dry_run, not skip_common
         )

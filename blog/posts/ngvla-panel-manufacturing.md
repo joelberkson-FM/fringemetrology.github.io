@@ -12,3 +12,5 @@ The next-generation Very Large Array (ngVLA) radio telescope aims to produce 250
 In November 2024 we delivered our largest system yet to mtex Antenna Technology Gmbh: FringeScan-3m. The system utilized 6 cameras (three cameras pairs) and an installation-caliber projector that all work in unison to cover the entire 3 meter area with a measurement time of just a few minutes.
 
 ![FringeScan-3m System](../imgs/fringe_scan_3m.png)
+
+![FringeScan-3m in Action](../imgs/ngVLA_install.jpg)

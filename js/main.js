@@ -32,18 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const header = document.querySelector('header');
 
+    let isScrolling;
     window.addEventListener('scroll', () => {
         if (document.body.classList.contains('subpage')) {
             // Always keep header in scrolled state for subpages
             header.classList.add('scrolled');
-            return;
+        } else {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         }
 
-        if (window.scrollY > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
+        // Close dropdowns on scroll
+        // When scrolling, we hide the dropdowns. This causes the hover state to be lost
+        // if the mouse was over the dropdown, ensuring it stays closed until the user
+        // interacts with the menu again.
+        header.classList.add('hide-dropdowns');
+
+        window.clearTimeout(isScrolling);
+        isScrolling = setTimeout(() => {
+            header.classList.remove('hide-dropdowns');
+        }, 100);
     });
 
     const heroBg = document.getElementById('hero-bg');

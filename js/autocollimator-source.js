@@ -44,6 +44,7 @@ window.initSourceAutocollimator = function (config = {}) {
             sourceSlider.value = 0;
             // dispatch input event so any listeners update (drawing logic)
             // or just call draw();
+            updateDisplays();
             draw();
         }, { position: 'top-left' });
     }
@@ -142,32 +143,64 @@ window.initSourceAutocollimator = function (config = {}) {
         ctx.fillText("Source Point", drawnSourceX - 45, sourceY - 15);
 
         // --- 2. Ray Tracing: Outgoing (White) ---
-        // Source -> Beamsplitter
+        // Lens Aperture Targets (Fixed)
+        const objTopY = centerY - 35;
+        const objBotY = centerY + 35;
+
+        // Dynamic Physics:
+        // Virtual Source Calculation (same as before)
+        // Virtual Source X = reticleX (300)
+        // Virtual Source Y = centerY + sourceXOffset
+        const vsX = reticleX;
+        const vsY = centerY + sourceXOffset;
+
+        // Beamsplitter Line Equation:
+        // Pivot/Center is (beamsplitterX, centerY)
+        // Slope is 1 (Top-Left to Bottom-Right on this canvas config)
+        // y - centerY = 1 * (x - beamsplitterX)
+        // => y = x + (centerY - beamsplitterX)
+        const bsIntercept = centerY - beamsplitterX;
+
+        // Function to find intersection of Ray (VS -> LensPoint) and BS Line
+        function getBSIntersection(targetX, targetY) {
+            // Ray Line: P = VS + t * (Target - VS)
+            // x = vsX + t * (targetX - vsX)
+            // y = vsY + t * (targetY - vsY)
+            // Substitute into BS: y = x + bsIntercept
+            // vsY + t(dy) = vsX + t(dx) + bsIntercept
+            // t(dy - dx) = vsX + bsIntercept - vsY
+            // t = (vsX + bsIntercept - vsY) / (dy - dx)
+
+            const dx = targetX - vsX;
+            const dy = targetY - vsY;
+
+            // Check for parallel lines (shouldn't happen here)
+            if (Math.abs(dy - dx) < 0.001) return { x: beamsplitterX, y: centerY };
+
+            const t = (vsX + bsIntercept - vsY) / (dy - dx);
+
+            return {
+                x: vsX + t * dx,
+                y: vsY + t * dy
+            };
+        }
+
+        const hitTop = getBSIntersection(objectiveX, objTopY);
+        const hitBot = getBSIntersection(objectiveX, objBotY);
+
+        // Draw Source -> Beamsplitter (Hit Points)
         ctx.beginPath();
         ctx.moveTo(drawnSourceX, sourceY);
-        // Hit points on Beamsplitter (Simulating beam width)
-        const spread = 15;
-
-        const bsTopX = beamsplitterX - spread;
-        const bsTopY = centerY - spread;
-        const bsBotX = beamsplitterX + spread;
-        const bsBotY = centerY + spread;
-
-        // Actually, let's just make the rays go from source to the "Lens Aperture" equivalent at the BS
-        // This is a schematic.
-        ctx.lineTo(bsTopX, bsTopY);
+        ctx.lineTo(hitTop.x, hitTop.y);
         ctx.moveTo(drawnSourceX, sourceY);
-        ctx.lineTo(bsBotX, bsBotY);
+        ctx.lineTo(hitBot.x, hitBot.y);
         ctx.strokeStyle = C_WHITE;
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Beamsplitter -> Objective
-        const objTopY = centerY - 35;
-        const objBotY = centerY + 35;
-
-        ExperimentLib.drawRay(ctx, bsTopX, bsTopY, objectiveX, objTopY, C_WHITE);
-        ExperimentLib.drawRay(ctx, bsBotX, bsBotY, objectiveX, objBotY, C_WHITE);
+        // Draw Beamsplitter -> Objective
+        ExperimentLib.drawRay(ctx, hitTop.x, hitTop.y, objectiveX, objTopY, C_WHITE);
+        ExperimentLib.drawRay(ctx, hitBot.x, hitBot.y, objectiveX, objBotY, C_WHITE);
 
         // Objective -> Mirror (Collimated Beam)
         // If source is offset, beam is NOT parallel to axis. It has angle `beamAngle`.
@@ -277,16 +310,7 @@ window.initSourceAutocollimator = function (config = {}) {
 
         // --- 5. Annotations (Dashed Lines & Labels) ---
 
-        // Draw the 2alpha angle indication
-        if (Math.abs(angleDeg) > 1) {
-            ctx.beginPath();
-            ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = ExperimentLib.Colors.ANNOTATION;
-            // Dashed line continuing straight from objective
-            ctx.moveTo(objectiveX, objTopY);
-            ctx.lineTo(objectiveX + 150, objTopY);
-            ctx.stroke();
-        }
+
 
         // --- 6. Reticle View Overlay ---
         drawReticleView(h);
@@ -349,11 +373,73 @@ window.initSourceAutocollimator = function (config = {}) {
         ctx.fillText("Reticle View", viewX, viewY - 55);
     }
 
-    slider.addEventListener('input', draw);
-    sourceSlider.addEventListener('input', draw);
+    // --- Helper for Displays ---
+    function updateDisplays() {
+        if (cfg.tiltDisplayId) {
+            const el = document.getElementById(cfg.tiltDisplayId);
+            if (el) el.textContent = parseFloat(slider.value).toFixed(2) + "°";
+        }
+        if (cfg.sourceDisplayId) {
+            const el = document.getElementById(cfg.sourceDisplayId);
+            if (el) el.textContent = parseFloat(sourceSlider.value).toFixed(1) + " mm";
+        }
+    }
+
+    // --- Coupling Logic (Auto Align) ---
+    function updateFromTilt() {
+        if (cfg.autoAlignCheckboxId) {
+            const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+            if (autoAlign && autoAlign.checked) {
+                const angleRad = parseFloat(slider.value) * (Math.PI / 180);
+                // Same physics: x = -f * tan(2*theta)
+                let targetSourceX = objFocalLength * Math.tan(-2 * angleRad);
+
+                const min = parseFloat(sourceSlider.min);
+                const max = parseFloat(sourceSlider.max);
+                if (targetSourceX < min) targetSourceX = min;
+                if (targetSourceX > max) targetSourceX = max;
+
+                sourceSlider.value = targetSourceX;
+            }
+        }
+        updateDisplays();
+        draw();
+    }
+
+    function updateFromSource() {
+        if (cfg.autoAlignCheckboxId) {
+            const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+            if (autoAlign && autoAlign.checked) {
+                const sourceX = parseFloat(sourceSlider.value);
+                // theta = 0.5 * atan(-x/f)
+                let targetThetaRad = 0.5 * Math.atan(-sourceX / objFocalLength);
+                let targetThetaDeg = targetThetaRad * (180 / Math.PI);
+
+                const min = parseFloat(slider.min);
+                const max = parseFloat(slider.max);
+                if (targetThetaDeg < min) targetThetaDeg = min;
+                if (targetThetaDeg > max) targetThetaDeg = max;
+
+                slider.value = targetThetaDeg;
+            }
+        }
+        updateDisplays();
+        draw();
+    }
+
+    slider.addEventListener('input', updateFromTilt);
+    sourceSlider.addEventListener('input', updateFromSource);
+
+    if (cfg.autoAlignCheckboxId) {
+        const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
+        if (autoAlign) {
+            autoAlign.addEventListener('change', updateFromTilt);
+        }
+    }
+
     window.addEventListener('resize', draw);
 
-    // Initial draw
+    updateDisplays();
     draw();
 };
 

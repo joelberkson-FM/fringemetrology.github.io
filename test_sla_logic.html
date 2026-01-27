@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SLA Logic Test</title>
+</head>
+
+<body>
+    <canvas id="slaCanvas" width="1000" height="480"></canvas>
+    <div class="ac-controls">
+        <input type="range" id="slaTiltSlider" min="-3" max="3" step="0.01" value="0">
+        <span id="slaTiltDisplay"></span>
+        <input type="range" id="slaSourceSlider" min="-10" max="10" step="0.1" value="0">
+        <span id="slaSourceDisplay"></span>
+    </div>
+
+    <script src="js/experiment-shared.js"></script>
+    <script src="js/autocollimator.js"></script>
+    <script src="js/autocollimator-source.js"></script>
+    <script src="js/autocollimator-sla.js"></script>
+
+    <script>
+        window.initSLAAutocollimator({
+            canvasId: 'slaCanvas',
+            tiltSliderId: 'slaTiltSlider',
+            sourceSliderId: 'slaSourceSlider',
+            tiltDisplayId: 'slaTiltDisplay',
+            sourceDisplayId: 'slaSourceDisplay'
+        });
+
+        const tiltSlider = document.getElementById('slaTiltSlider');
+        const sourceSlider = document.getElementById('slaSourceSlider');
+        const tiltDisplay = document.getElementById('slaTiltDisplay');
+        const sourceDisplay = document.getElementById('slaSourceDisplay');
+
+        const objFocalLength = 680 - 300; // From JS source: objectiveX - reticleX
+
+        function testCoupling() {
+            console.log("Starting Coupling Test...");
+
+            // Test 1: Change Tilt, check Source
+            tiltSlider.value = 1.0;
+            tiltSlider.dispatchEvent(new Event('input'));
+
+            const expectedSourceX = objFocalLength * Math.tan(-2 * (1.0 * Math.PI / 180));
+            const actualSourceX = parseFloat(sourceSlider.value);
+
+            console.log(`Test 1 (Tilt -> Source): Input Tilt=1.0deg. Expected Source=${expectedSourceX.toFixed(3)}, Actual=${actualSourceX.toFixed(3)}`);
+
+            if (Math.abs(expectedSourceX - actualSourceX) < 0.1) {
+                console.log("PASS: Tilt drives Source correctly.");
+            } else {
+                console.error("FAIL: Tilt drives Source incorrectly.");
+            }
+
+            // Test 2: Change Source, check Tilt
+            sourceSlider.value = 5.0;
+            sourceSlider.dispatchEvent(new Event('input'));
+
+            // theta = -0.5 * atan(sourceX / f)
+            const expectedThetaRad = -0.5 * Math.atan(5.0 / objFocalLength);
+            const expectedThetaDeg = expectedThetaRad * (180 / Math.PI);
+            const actualThetaDeg = parseFloat(tiltSlider.value);
+
+            console.log(`Test 2 (Source -> Tilt): Input Source=5.0px. Expected Tilt=${expectedThetaDeg.toFixed(3)}, Actual=${actualThetaDeg.toFixed(3)}`);
+
+            if (Math.abs(expectedThetaDeg - actualThetaDeg) < 0.05) {
+                console.log("PASS: Source drives Tilt correctly.");
+            } else {
+                console.error("FAIL: Source drives Tilt incorrectly.");
+            }
+
+            // Test 3: Display Updates
+            if (tiltDisplay.textContent.includes("°")) {
+                console.log("PASS: Tilt Display has units.");
+            } else {
+                console.error("FAIL: Tilt Display missing units.");
+            }
+
+            document.body.style.backgroundColor = "green";
+            document.body.innerHTML += "<h1>TESTS COMPLETED - CHECK CONSOLE</h1>";
+        }
+
+        setTimeout(testCoupling, 500);
+    </script>
+</body>
+
+</html>

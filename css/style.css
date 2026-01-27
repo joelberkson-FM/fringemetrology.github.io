@@ -212,24 +212,14 @@ body.no-scroll {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 56.25vw;
+    /* 16:9 Aspect Ratio */
+    min-height: 100vh;
+    min-width: 177.78vh;
+    /* 16:9 Aspect Ratio */
+    transform: translate(-50%, -50%) scale(1.1);
     pointer-events: none;
-}
-
-@media (min-aspect-ratio: 16/9) {
-    #hero-bg iframe {
-        width: 100vw;
-        height: 56.25vw;
-        /* 100 * 9 / 16 */
-    }
-}
-
-@media (max-aspect-ratio: 16/9) {
-    #hero-bg iframe {
-        height: 100vh;
-        width: 177.78vh;
-        /* 100 * 16 / 9 */
-    }
 }
 
 /* Header & Nav */
@@ -304,6 +294,12 @@ header.scrolled .logo-text {
     }
 }
 
+@media (max-width: 480px) {
+    .logo-text {
+        display: none;
+    }
+}
+
 .logo-container {
     width: auto;
     /* min-width: 120px; Removed to prevent layout constraints */
@@ -349,191 +345,8 @@ nav ul {
     transition: all 0.3s ease;
 }
 
-@media (max-width: 1200px) {
-    .mobile-nav-toggle {
-        display: flex;
-    }
 
-    nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 100%;
-        height: 100vh;
-        background: var(--bg-primary);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 1050;
-        overflow-y: auto;
-        /* Allow scrolling if menu is tall */
-        padding-top: 80px;
-        /* Space for close button/header */
-        padding-bottom: 40px;
-    }
 
-    nav.active {
-        right: 0;
-    }
-
-    nav ul {
-        flex-direction: column;
-        text-align: center;
-        gap: 2rem;
-        width: 100%;
-        /* Ensure list takes full width */
-    }
-
-    .nav-item {
-        width: 100%;
-        /* Items take full width */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    nav a {
-        font-size: 1.5rem;
-    }
-
-    .nav-item .dropdown {
-        position: static;
-        opacity: 0;
-        visibility: hidden;
-        transform: none;
-        max-height: 0;
-        overflow: hidden;
-        box-shadow: none;
-        background: transparent;
-        border-bottom: none;
-        padding: 0;
-        margin-top: 0;
-        display: block;
-        width: 100%;
-        transition: max-height 0.6s ease,
-            opacity 0.6s ease;
-    }
-
-    .nav-item:focus-within .dropdown,
-    .nav-item:hover .dropdown {
-        max-height: 300px;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .dropdown-content {
-        flex-direction: column;
-        min-height: 0;
-        padding: 0;
-        width: 100%;
-        align-items: center;
-    }
-
-    .dropdown-featured {
-        grid-template-columns: 1fr;
-        gap: 5px;
-        /* Reduced gap for list feel */
-        padding: 5px 0;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        align-items: center;
-    }
-
-    .featured-card {
-        min-height: 0;
-        flex-direction: row;
-        align-items: center;
-        background: transparent;
-        padding: 10px 0;
-        /* Minimal padding */
-        border: none;
-        box-shadow: none;
-        transform: none !important;
-        /* Disable hover movement */
-        justify-content: center;
-        /* Center aligns the text like main links */
-        width: 100%;
-        /* spread the whole width */
-    }
-
-    .featured-card:hover {
-        background: transparent;
-        transform: none;
-        box-shadow: none;
-    }
-
-    .featured-card::after {
-        content: none;
-    }
-
-    .featured-card .card-image {
-        display: none;
-        /* Hide images */
-    }
-
-    .featured-card .card-text {
-        background: transparent;
-        padding: 0;
-        align-items: center;
-        /* Center align text */
-        width: auto;
-        flex-grow: 0;
-    }
-
-    .featured-card h4 {
-        font-size: 1.2rem;
-        margin-bottom: 0;
-        color: var(--text-secondary);
-        /* Match nav link color style */
-        font-weight: 500;
-        display: inline-block;
-        position: relative;
-    }
-
-    .featured-card h4::after {
-        content: '';
-        position: absolute;
-        bottom: 0px;
-        left: 0;
-        width: 0%;
-        height: 2px;
-        background: var(--accent);
-        transition: width var(--transition-speed);
-    }
-
-    .featured-card:hover h4::after {
-        width: 100%;
-    }
-
-    .featured-card:hover h4 {
-        color: var(--text-primary);
-    }
-
-    .featured-card p {
-        display: none;
-        /* Hide description for list style */
-    }
-
-    .featured-card svg {
-        display: none;
-        /* Hide arrows for cleaner list look */
-    }
-
-    .mobile-nav-toggle.active .hamburger-bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-
-    .mobile-nav-toggle.active .hamburger-bar:nth-child(2) {
-        opacity: 0;
-    }
-
-    .mobile-nav-toggle.active .hamburger-bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-}
 
 nav a {
     color: var(--text-secondary);
@@ -588,7 +401,10 @@ nav a:hover::after {
     /* Changed border to bottom for full width feel */
     border-radius: 0;
     /* Removed rounding for full width */
-    height: calc(100vh - var(--nav-height));
+    /* height: calc(100vh - var(--nav-height)); Removed to allow auto height */
+    height: auto;
+    max-height: 80vh;
+    /* Prevent it from being larger than viewport if content is huge */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -613,7 +429,9 @@ nav a:hover::after {
 }
 
 header.scrolled .dropdown {
-    height: calc(100vh - var(--nav-height-scrolled));
+    /* height: calc(100vh - var(--nav-height-scrolled)); Removed */
+    height: auto;
+    max-height: 80vh;
 }
 
 .nav-item:hover .dropdown {
@@ -622,6 +440,14 @@ header.scrolled .dropdown {
     transform: translateY(0px);
     transition-delay: 0s;
     /* Immediate reaction on hover-in */
+}
+
+/* Force hide dropdowns when scrolling */
+header.hide-dropdowns .dropdown {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(20px) !important;
 }
 
 .dropdown-content {
@@ -2630,7 +2456,6 @@ body.white-page .blog-card p {
 .ac-controls {
     padding: 25px;
     background-color: #001538;
-    border-top: 1px solid #1a3a6e;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2877,4 +2702,321 @@ body.white-page .blog-card p {
 .innovation-section .feature-text-column p,
 .innovation-section .feature-text-column ul {
     color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 1200px) {
+    .mobile-nav-toggle {
+        display: flex;
+    }
+
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background: var(--bg-primary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1050;
+        overflow-y: auto;
+        /* Allow scrolling if menu is tall */
+        padding-top: 80px;
+        /* Space for close button/header */
+        padding-bottom: 40px;
+    }
+
+    nav.active {
+        right: 0;
+    }
+
+    nav ul {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        width: 100%;
+        /* Ensure list takes full width */
+    }
+
+    .nav-item {
+        width: 100%;
+        /* Items take full width */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav a {
+        font-size: 1.5rem;
+    }
+
+    .nav-item .dropdown {
+        position: static;
+        opacity: 0;
+        visibility: hidden;
+        transform: none;
+        max-height: 0;
+        overflow: hidden;
+        box-shadow: none;
+        background: transparent;
+        border-bottom: none;
+        padding: 0;
+        margin-top: 0;
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: max-height 0.6s ease,
+            opacity 0.6s ease;
+    }
+
+    .nav-item:focus-within .dropdown,
+    .nav-item:hover .dropdown {
+        max-height: 800px;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .dropdown-content {
+        flex-direction: column;
+        min-height: 0;
+        padding: 0;
+        width: 100%;
+        align-items: center;
+    }
+
+    .dropdown-featured {
+        grid-template-columns: 1fr;
+        gap: 5px;
+        /* Reduced gap for list feel */
+        padding: 5px 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+
+    .featured-card {
+        min-height: 0;
+        flex-direction: row;
+        align-items: center;
+        background: transparent;
+        padding: 10px 0;
+        /* Minimal padding */
+        border: none;
+        box-shadow: none;
+        transform: none !important;
+        /* Disable hover movement */
+        justify-content: center;
+        /* Center aligns the text like main links */
+        width: 100%;
+        /* spread the whole width */
+    }
+
+    .featured-card:hover {
+        background: transparent;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .featured-card::after {
+        content: none;
+    }
+
+    .featured-card .card-image {
+        display: none;
+        /* Hide images */
+    }
+
+    .featured-card .card-text {
+        background: transparent;
+        padding: 0;
+        align-items: center;
+        /* Center align text */
+        width: auto;
+        flex-grow: 0;
+    }
+
+    .featured-card h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+        color: var(--text-secondary);
+        /* Match nav link color style */
+        font-weight: 500;
+        display: inline-block;
+        position: relative;
+    }
+
+    .featured-card h4::after {
+        content: '';
+        position: absolute;
+        bottom: 0px;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background: var(--accent);
+        transition: width var(--transition-speed);
+    }
+
+    .featured-card:hover h4::after {
+        width: 100%;
+    }
+
+    .featured-card:hover h4 {
+        color: var(--text-primary);
+    }
+
+    .featured-card p {
+        display: none;
+        /* Hide description for list style */
+    }
+
+    .featured-card svg {
+        display: none;
+        /* Hide arrows for cleaner list look */
+    }
+
+    .mobile-nav-toggle.active .hamburger-bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .mobile-nav-toggle.active .hamburger-bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-nav-toggle.active .hamburger-bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}
+
+/* Specs Table Styles */
+.specs-section {
+    padding: 60px 5%;
+    background-color: var(--bg-secondary);
+    display: flex;
+    justify-content: center;
+}
+
+.specs-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+.specs-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: var(--bg-primary);
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 1.1rem;
+}
+
+.specs-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--bg-primary);
+}
+
+.specs-table td:first-child {
+    font-weight: 700;
+    width: 40%;
+}
+
+.specs-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Autocollimator Controls */
+.ac-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 600px;
+    margin: 0 auto;
+    background: #011D49;
+    /* Dark Blue to match Canvas */
+    padding: 20px;
+    border-radius: 12px;
+    /* border removed per request */
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.ac-controls label {
+    font-size: 0.85rem;
+    /* Decreased from 1rem */
+    font-weight: 600;
+    color: #ffffff;
+    /* White text */
+    text-align: left;
+    text-transform: uppercase;
+    /* Match other labels if desired, or keep as is */
+    letter-spacing: 0.5px;
+}
+
+.value-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    /* Decreased */
+    font-weight: 600;
+    color: #cce85e;
+    /* Green Accent */
+    min-width: 80px;
+    text-align: right;
+}
+
+/* Specific override for the input range to match width */
+.ac-controls input[type="range"] {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    /* Track */
+}
+
+/* Custom Checkbox Button Style (Matches Reset Button) */
+.hidden-checkbox {
+    display: none;
+}
+
+.custom-btn-label {
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid #cce85e;
+    color: #cce85e;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    user-select: none;
+    display: inline-block;
+    margin-bottom: 5px;
+    /* Spacing */
+}
+
+.custom-btn-label:hover {
+    background-color: rgba(204, 232, 94, 0.1);
+    box-shadow: 0 0 10px rgba(204, 232, 94, 0.3);
+}
+
+.hidden-checkbox:checked+.custom-btn-label {
+    background-color: #cce85e;
+    color: #011D49;
+    box-shadow: 0 0 10px rgba(204, 232, 94, 0.5);
 }

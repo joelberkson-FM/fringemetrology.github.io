@@ -1,0 +1,41 @@
+/* Autocollimator Controls */
+.ac-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.ac-controls label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bg-primary);
+    /* Dark text for light theme */
+    text-align: left;
+}
+
+/* Ensure white text if inside a dark container/section if needed, 
+   but specific to where it is used (white-section vs others).
+   The SLA section is .white-section theme-light, so bg-primary text is correct.
+*/
+
+.value-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    color: var(--accent);
+    /* standout color */
+    min-width: 80px;
+    text-align: right;
+}

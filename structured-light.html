@@ -113,77 +113,8 @@
             </div>
         </section>
 
-        <section class="full-width-section theme-light">
-            <div class="content-container">
-                <h3>What is a Structured Light
-                    Autocollimator (SLA)?</h3>
-                <p>
-                    Structured Light Autocollimation (SLA) is a fundamentally new class of surface metrology.
-                    Rooted in the 100-year-old principle of autocollimation, SLA evolves this proven optical
-                    method into a fully digital, high-resolution measurement platform.
-                </p>
-
-                <!-- Desktop Content: Experiment -->
-                <div class="desktop-only">
-                    <p>
-                        At its core, the autocollimator is a slope measurement system, that measures the average slope
-                        over an optic. The old systems were completely analog, with a simple reticle and eye for
-                        measuring the surface slope. See the below tool, the spot shifts as the mirror tilts. Also note
-                        if the source point is moved, the spot also shifts.
-                    </p>
-                    <br>
-                    <div class="autocollimator-container">
-                        <canvas id="sourceCanvas" width="1000" height="480"></canvas>
-                        <div class="ac-controls">
-                            <label for="sourceTiltSlider">Mirror Tilt</label>
-                            <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.05" value="0">
-
-                            <label for="sourcePosSlider">Source Point Position</label>
-                            <input type="range" id="sourcePosSlider" min="-10" max="10" step="0.1" value="0">
-                        </div>
-                    </div>
-                    <br>
-                    <p>
-                        We make two key changes to a standard autocollimator layout: we replace the point source with an
-                        extended source, specifically a display, and a replace the reticle with an aperture stop,
-                        restricting the rays that enter the system to only chief rays.
-                    </p>
-                    <p>
-                        In the below tool, we have the same perfect mirror from the previous tool, but we are using
-                        a display as the source. By changing the active pixel on the display, we can measure the
-                        slope of the mirror.
-                    </p>
-                    <br>
-                    <div class="autocollimator-container">
-                        <canvas id="slaCanvas" width="1000" height="480"></canvas>
-                        <div class="ac-controls">
-                            <label for="slaTiltSlider">Mirror Tilt</label>
-                            <input type="range" id="slaTiltSlider" min="-3" max="3" step="0.05" value="0">
-
-                            <label for="slaSourceSlider">Active Pixel Position</label>
-                            <input type="range" id="slaSourceSlider" min="-10" max="10" step="0.1" value="0">
-                        </div>
-                    </div>
-                    <br>
-                    <p>
-                        Instead of just sending a single pixel at a time, we can send a structured pattern (fringes)
-                        with our micro display. Using the same math as phase-shifting interferometers, we convert images
-                        of the reflected phase shifted pattern to phase, then directly to slope. Because of this unique
-                        layout, each pixel on the sensor measures an isolated x slope and y slope.
-                    </p>
-                </div>
-
-                <!-- Mobile Content: GIF -->
-                <div class="mobile-only">
-                    <div class="image-placeholder mobile-placeholder">
-                        <img src="imgs/sla_what_is_sla.gif" alt="What is SLA">
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Limits of Conventional Metrology Section -->
-        <section class="features-section theme-light white-section" style="padding-top: 0;">
+        <section class="features-section theme-light white-section">
             <div class="content-container">
                 <h3>The Limits of Conventional Metrology</h3>
                 <p>
@@ -288,6 +219,97 @@
 
         </section>
 
+        <section class="full-width-section theme-light">
+            <div class="content-container">
+                <h3>What is a Structured Light
+                    Autocollimator (SLA)?</h3>
+                <p>
+                    Structured Light Autocollimation (SLA) is a fundamentally new class of surface metrology.
+                    Rooted in the 100-year-old principle of autocollimation, SLA evolves this proven optical
+                    method into a fully digital, high-resolution measurement platform.
+                </p>
+
+                <!-- Desktop Content: Experiment -->
+                <div class="desktop-only">
+                    <p>
+                        At its core, the autocollimator is a slope measurement system, that measures the average slope
+                        over an optic. The old systems were completely analog, with a simple reticle and eye for
+                        measuring the surface slope. See the below tool, the spot shifts as the mirror tilts. Also note
+                        if the source point is moved, the spot also shifts.
+                    </p>
+                    <br>
+                    <div class="autocollimator-container">
+                        <canvas id="sourceCanvas" width="1000" height="480"></canvas>
+                        <div class="ac-controls">
+                            <div class="control-row" style="justify-content: flex-start; gap: 10px;">
+                                <input type="checkbox" id="sourceAutoAlign" class="hidden-checkbox">
+                                <label for="sourceAutoAlign" class="custom-btn-label">Auto Align</label>
+                            </div>
+
+                            <div class="control-row">
+                                <label for="sourceTiltSlider">Mirror Tilt</label>
+                                <span id="sourceTiltDisplay" class="value-display">0.00°</span>
+                            </div>
+                            <input type="range" id="sourceTiltSlider" min="-3" max="3" step="0.01" value="0">
+
+                            <div class="control-row">
+                                <label for="sourcePosSlider">Source Point Position</label>
+                                <span id="sourcePosDisplay" class="value-display">0.0 mm</span>
+                            </div>
+                            <input type="range" id="sourcePosSlider" min="-40" max="40" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <br>
+                    <p>
+                        We make two key changes to a standard autocollimator layout: we replace the point source with an
+                        extended source, specifically a display, and a replace the reticle with an aperture stop,
+                        restricting the rays that enter the system to only chief rays.
+                    </p>
+                    <p>
+                        In the below tool, we have the same perfect mirror from the previous tool, but we are using
+                        a display as the source. By changing the active pixel on the display, we can measure the
+                        slope of the mirror.
+                    </p>
+                    <br>
+                    <div class="autocollimator-container">
+                        <canvas id="slaCanvas" width="1000" height="480"></canvas>
+                        <div class="ac-controls">
+                            <div class="control-row" style="justify-content: flex-start; gap: 10px;">
+                                <input type="checkbox" id="slaAutoAlign" class="hidden-checkbox" style="width: auto;">
+                                <label for="slaAutoAlign" class="custom-btn-label">Auto Align</label>
+                            </div>
+
+                            <div class="control-row">
+                                <label for="slaTiltSlider">Mirror Tilt</label>
+                                <span id="slaTiltDisplay" class="value-display">0.00°</span>
+                            </div>
+                            <input type="range" id="slaTiltSlider" min="-3" max="3" step="0.01" value="0">
+
+                            <div class="control-row">
+                                <label for="slaSourceSlider">Active Pixel Position</label>
+                                <span id="slaSourceDisplay" class="value-display">0.0 px</span>
+                            </div>
+                            <input type="range" id="slaSourceSlider" min="-40" max="40" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <br>
+                    <p>
+                        Instead of just sending a single pixel at a time, we can send a structured pattern (fringes)
+                        with our micro display. Using the same math as phase-shifting interferometers, we convert images
+                        of the reflected phase shifted pattern to phase, then directly to slope. Because of this unique
+                        layout, each pixel on the sensor measures an isolated x slope and y slope.
+                    </p>
+                </div>
+
+                <!-- Mobile Content: GIF -->
+                <div class="mobile-only">
+                    <div class="image-placeholder mobile-placeholder">
+                        <img src="imgs/sla_what_is_sla.gif" alt="What is SLA">
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- One Measurement, Full Understanding Section -->
         <section class="features-section theme-light white-section">
             <div class="content-container">
@@ -319,7 +341,6 @@
         <script src="js/autocollimator.js"></script>
         <script src="js/autocollimator-source.js"></script>
         <script src="js/autocollimator-sla.js"></script>
-        <script src="js/autocollimator-sla.js"></script>
 
         <script>
             // Initialize both experiments
@@ -332,14 +353,20 @@
                 window.initSourceAutocollimator({
                     canvasId: 'sourceCanvas',
                     tiltSliderId: 'sourceTiltSlider',
-                    sourceSliderId: 'sourcePosSlider'
+                    sourceSliderId: 'sourcePosSlider',
+                    tiltDisplayId: 'sourceTiltDisplay',
+                    sourceDisplayId: 'sourcePosDisplay',
+                    autoAlignCheckboxId: 'sourceAutoAlign'
                 });
 
                 // Experiment 2: SLA Autocollimator
                 window.initSLAAutocollimator({
                     canvasId: 'slaCanvas',
                     tiltSliderId: 'slaTiltSlider',
-                    sourceSliderId: 'slaSourceSlider'
+                    sourceSliderId: 'slaSourceSlider',
+                    tiltDisplayId: 'slaTiltDisplay',
+                    sourceDisplayId: 'slaSourceDisplay',
+                    autoAlignCheckboxId: 'slaAutoAlign'
                 });
             });
         </script>

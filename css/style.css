@@ -2389,7 +2389,7 @@ body.white-page .blog-card p {
     display: flex;
     align-items: center;
     gap: 80px;
-    animation: scroll 40s linear infinite;
+    animation: scroll 60s linear infinite;
     flex-shrink: 0;
     padding-right: 80px;
     /* Ensure gap between last item of set 1 and first of set 2 */

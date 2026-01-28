@@ -85,7 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Close menu when a link is clicked
         const navLinks = nav.querySelectorAll('a');
         navLinks.forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
+                // Don't close menu if it's a dropdown toggle
+                if (link.getAttribute('href') === '#' || link.nextElementSibling?.classList.contains('dropdown')) {
+                    e.preventDefault(); // Prevent jump to top
+                    // Optional: Toggle a specific class if CSS hover/focus isn't enough, 
+                    // but for now relying on :focus-within or hover in CSS.
+                    // Actually, better to just not close the mobile nav.
+                    return;
+                }
+
                 mobileNavToggle.classList.remove('active');
                 nav.classList.remove('active');
                 body.classList.remove('no-scroll');

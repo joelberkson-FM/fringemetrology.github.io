@@ -1,30 +1,45 @@
 #!/usr/bin/env python3
 """
-update_placeholders.py - Updates image placeholders AND common elements in HTML files.
+build.py - Combined build script for Fringe Metrology website.
 
-This script:
-1. Scans HTML files for image-placeholder divs and updates them with matching images
-2. Updates all footers and headers to match a standardized template
+This script performs two main functions:
+1. Builds the blog:
+   - Converts Markdown posts from blog/posts/ to HTML files in the root directory.
+   - Updates blog.html with the list of posts.
+2. Updates placeholders and common elements:
+   - Scans HTML files for image-placeholder divs and updates them.
+   - Updates headers and footers to standard templates.
+   - Updates the partners section in index.html.
 
 Usage:
-    python update_placeholders.py [--dry-run]
-    
-Options:
-    --dry-run    Show what would be changed without making modifications
+    python build.py [--dry-run] [--skip-common]
 """
 
 import os
+import glob
+import markdown
+import yaml
+import datetime
 import re
 import sys
 from pathlib import Path
 
+# ==========================================
 # Configuration
+# ==========================================
+
 SCRIPT_DIR = Path(__file__).parent
+BLOG_DIR = SCRIPT_DIR / 'blog'
+POSTS_DIR = BLOG_DIR / 'posts'
+TEMPLATE_FILE = BLOG_DIR / 'template.html'
+BLOG_INDEX_FILE = SCRIPT_DIR / 'blog.html'
 IMGS_DIR = SCRIPT_DIR / "imgs"
-HTML_FILES = [] # Will be populated dynamically
 
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'}
 
+# ==========================================
+# Standard Templates
+# ==========================================
 
 # Standard footer HTML (for root-level pages)
 STANDARD_FOOTER = """    <footer>
@@ -320,6 +335,190 @@ STANDARD_HEADER_BLOG = """    <header class="scrolled">
         </button>
     </header>"""
 
+# ==========================================
+# Blog Building Functions
+# ==========================================
+
+def load_template():
+    if not TEMPLATE_FILE.exists():
+        print(f"Error: Template file not found at {TEMPLATE_FILE}")
+        return ""
+    with open(TEMPLATE_FILE, 'r', encoding='utf-8') as f:
+        return f.read()
+
+def parse_post(filepath):
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Split frontmatter and content
+    if content.startswith('---'):
+        parts = content.split('---', 2)
+        if len(parts) >= 3:
+            metadata = yaml.safe_load(parts[1])
+            markdown_content = parts[2]
+            return metadata, markdown_content
+    
+    # Fallback if no frontmatter
+    return {}, content
+
+def generate_post_html(metadata, markdown_content, template):
+    # Convert markdown to HTML
+    html_content = markdown.markdown(markdown_content)
+    
+    # Inject into template
+    title = metadata.get('title', 'Blog Post')
+    image = metadata.get('image', '')
+    
+    hero_class = ""
+    hero_style = ""
+    
+    if image:
+        hero_class = "has-image"
+        # image in frontmatter might have ../imgs/foo.png
+        # Since the page is now in root, we remove ../
+        if image.startswith('../'):
+            image = image[3:]
+        hero_style = f"background-image: url('{image}');"
+    
+    # Also fix paths inside markdown content
+    html_content = html_content.replace('../imgs/', 'imgs/')
+    html_content = html_content.replace('../index.html', 'index.html')
+    html_content = html_content.replace('../blog.html', 'blog.html')
+    html_content = html_content.replace('../contact.html', 'contact.html')
+    html_content = html_content.replace('../about.html', 'about.html')
+    
+    # Format date
+    date_obj = metadata.get('date')
+    if isinstance(date_obj, str):
+        try:
+            date_obj = datetime.datetime.strptime(date_obj, '%Y-%m-%d')
+        except:
+            date_obj = datetime.datetime.now()
+    elif not date_obj:
+        date_obj = datetime.datetime.now()
+        
+    date_str = date_obj.strftime('%B %d, %Y')
+    
+    # Simple replacement - in a real app might use Jinja2
+    output_html = template.replace('{{ title }}', title)
+    output_html = output_html.replace('{{ content }}', html_content)
+    output_html = output_html.replace('{{ hero_class }}', hero_class)
+    output_html = output_html.replace('{{ hero_style }}', hero_style)
+    output_html = output_html.replace('{{ date }}', date_str)
+    
+    return output_html
+
+def update_blog_index(posts):
+    if not BLOG_INDEX_FILE.exists():
+        print(f"Error: Blog index file not found at {BLOG_INDEX_FILE}")
+        return
+
+    with open(BLOG_INDEX_FILE, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Sort posts by date desc
+    posts.sort(key=lambda x: x.get('date', ''), reverse=True)
+    
+    marker_start = '<!-- BLOG_POSTS_START -->'
+    marker_end = '<!-- BLOG_POSTS_END -->'
+    
+    if marker_start not in content or marker_end not in content:
+        print(f"Error: Markers not found in {BLOG_INDEX_FILE}")
+        return
+
+    # Generate HTML for cards
+    cards_html = f"{marker_start}\n"
+    cards_html += "                    <!-- Posts will be injected here by build_blog.py -->\n"
+    
+    for post in posts:
+        if post.get('hidden') is True:
+            continue
+        # Format date
+        date_obj = post.get('date')
+        if isinstance(date_obj, str):
+             try:
+                date_obj = datetime.datetime.strptime(date_obj, '%Y-%m-%d')
+             except:
+                date_obj = datetime.datetime.now() # Fallback
+        
+        date_str = date_obj.strftime('%B %d, %Y') if date_obj else ""
+        image = post.get('image', 'imgs/card3.jpg')
+        # Fix image path for blog index (which is in root)
+        # Post frontmatter might have ../imgs/foo.png (relative to post file)
+        # We need imgs/foo.png (relative to root)
+        if image.startswith('../'):
+            image = image[3:]
+            
+        link = f"{post['filename'].replace('.md', '.html')}"
+        title = post.get('title', 'Untitled')
+        description = post.get('description', '')
+        
+        cards_html += f'''
+                    <article class="blog-card" data-type="{post.get('type', 'Case Study').replace(' ', '-').lower()}">
+                        <div class="blog-card-image" style="background-image: url('{image}')"></div>
+                        <div class="blog-card-content">
+                            <span class="blog-type">{post.get('type', 'Case Study')}</span>
+                            <span class="blog-date">{date_str}</span>
+                            <h3>{title}</h3>
+                            <p>{description}</p>
+                            <a href="{link}" class="read-more">Read More <svg class="arrow-right" width="12" height="12"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg></a>
+                        </div>
+                    </article>
+'''
+    cards_html += f"                    {marker_end}"
+    
+    # Replace content between markers
+    start_idx = content.find(marker_start)
+    end_idx = content.find(marker_end) + len(marker_end)
+    
+    new_content = content[:start_idx] + cards_html + content[end_idx:]
+    
+    with open(BLOG_INDEX_FILE, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    print(f"Updated {BLOG_INDEX_FILE}")
+
+def run_build_blog():
+    print("\n=== Building Blog ===\n")
+    if not POSTS_DIR.exists():
+        print(f"No posts directory found at {POSTS_DIR}")
+        return
+
+    template = load_template()
+    if not template:
+        return
+
+    processed_posts = []
+
+    for filename in glob.glob(os.path.join(POSTS_DIR, '*.md')):
+        print(f"Processing {filename}...")
+        metadata, markdown_content = parse_post(filename)
+        
+        # Add filename to metadata for linking
+        metadata['filename'] = os.path.basename(filename)
+        
+        # Generate HTML
+        html = generate_post_html(metadata, markdown_content, template)
+        
+        # Save HTML file in root directory
+        output_filename = os.path.basename(filename).replace('.md', '.html')
+        output_path = SCRIPT_DIR / output_filename
+        
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+        
+        print(f"Saved {output_path}")
+        processed_posts.append(metadata)
+
+    update_blog_index(processed_posts)
+
+# ==========================================
+# Placeholder & Common Elements Functions
+# ==========================================
 
 def get_available_images():
     """Scan imgs folder and return a dict of basename -> full filename."""
@@ -360,11 +559,10 @@ def convert_background_to_img(html_content):
     changes_made = new_content != html_content
     return new_content, changes_made
 
-
 def update_footer(html_content, is_blog=False):
     """Update the footer to the standard template."""
-    # Match footer tag and all its contents
-    footer_pattern = r'<footer>[\s\S]*?</footer>'
+    # Match footer tag and all its contents, including any leading whitespace
+    footer_pattern = r'[ \t]*<footer>[\s\S]*?</footer>'
     standard = STANDARD_FOOTER_BLOG if is_blog else STANDARD_FOOTER
     
     new_content, count = re.subn(footer_pattern, standard, html_content)
@@ -372,8 +570,9 @@ def update_footer(html_content, is_blog=False):
 
 def update_header(html_content, is_blog=False, is_index=False):
     """Update the header to the standard template."""
-    # Match header tag and all its contents (handles both <header> and <header class="scrolled">)
-    header_pattern = r'<header[^>]*>[\s\S]*?</header>'
+    # Match header tag and all its contents, including any leading whitespace
+    # (handles both <header> and <header class="scrolled">)
+    header_pattern = r'[ \t]*<header[^>]*>[\s\S]*?</header>'
     
     if is_blog:
         standard = STANDARD_HEADER_BLOG
@@ -447,11 +646,10 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
     original_content = content
     placeholder_updates = []
     common_updates = []
-    common_updates = []
     conversion_updates = []
     partner_updates = []
     
-    is_blog = 'blog' in str(html_path) and html_path.name != 'template.html'
+    is_blog = html_path.parent.name == 'blog' and html_path.name != 'template.html'
     is_index = html_path.name == 'index.html' and not is_blog
     
     # Special handling for blog template: it lives in blog/ but is used to generate root pages
@@ -521,7 +719,6 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
             common_updates.append({
                 'file': html_path.name,
                 'type': 'header',
-                'type': 'header',
                 'description': 'Updated to standard header'
             })
             
@@ -542,19 +739,16 @@ def update_html_file(html_path, available_images, dry_run=False, update_common=T
     
     return placeholder_updates, common_updates, conversion_updates, partner_updates
 
-def main():
-    dry_run = '--dry-run' in sys.argv
-    skip_common = '--skip-common' in sys.argv
-    
+def run_update_placeholders(dry_run=False, skip_common=False):
+    print("\n=== Updating Placeholders & Common Elements ===\n")
     if dry_run:
-        print("=== DRY RUN MODE - No files will be modified ===\n")
+        print("--- DRY RUN MODE - No files will be modified ---\n")
     
     print("Scanning for images...")
     available_images = get_available_images()
     print(f"Found {len(available_images)//2} images in imgs folder\n")
     
     all_placeholder_updates = []
-    all_common_updates = []
     all_common_updates = []
     all_conversion_updates = []
     all_partner_updates = []
@@ -594,39 +788,65 @@ def main():
     
     # Report results
     if all_conversion_updates:
-        print("Image format conversions:" if not dry_run else "Image format conversions that would be made:")
+        print("\nImage format conversions:" if not dry_run else "\nImage format conversions that would be made:")
         print("-" * 60)
         for update in all_conversion_updates:
             print(f"  {update['file']}: {update['description']}")
-        print(f"Total: {len(all_conversion_updates)} file(s) converted\n")
+        print(f"Total: {len(all_conversion_updates)} file(s) converted")
     
     if all_placeholder_updates:
-        print("Placeholder updates:" if not dry_run else "Placeholder updates that would be made:")
+        print("\nPlaceholder updates:" if not dry_run else "\nPlaceholder updates that would be made:")
         print("-" * 60)
         for update in all_placeholder_updates:
             print(f"  {update['file']}: {update['placeholder']} -> {update['image']}")
-        print(f"Total: {len(all_placeholder_updates)} placeholder(s)\n")
+        print(f"Total: {len(all_placeholder_updates)} placeholder(s)")
     else:
-        print("No placeholders found with matching images.\n")
+        print("\nNo placeholders found with matching images.")
     
     if all_common_updates:
-        print("Common element updates:" if not dry_run else "Common element updates that would be made:")
+        print("\nCommon element updates:" if not dry_run else "\nCommon element updates that would be made:")
         print("-" * 60)
         for update in all_common_updates:
             print(f"  {update['file']}: {update['type']} - {update['description']}")
-        print(f"Total: {len(all_common_updates)} common element(s) updated\n")
+        print(f"Total: {len(all_common_updates)} common element(s) updated")
     elif not skip_common:
-        print("No common element updates needed.\n")
+        print("\nNo common element updates needed.")
     
     if all_partner_updates:
-        print("Partner section updates:" if not dry_run else "Partner section updates that would be made:")
+        print("\nPartner section updates:" if not dry_run else "\nPartner section updates that would be made:")
         print("-" * 60)
         for update in all_partner_updates:
             print(f"  {update['file']}: {update['description']}")
-        print(f"Total: {len(all_partner_updates)} partner section(s) updated\n")
+        print(f"Total: {len(all_partner_updates)} partner section(s) updated")
 
     if not all_placeholder_updates and not all_common_updates and not all_conversion_updates and not all_partner_updates:
         print("No updates were needed.")
+
+# ==========================================
+# Main Execution
+# ==========================================
+
+def main():
+    dry_run = '--dry-run' in sys.argv
+    skip_common = '--skip-common' in sys.argv
+    
+    # Always run build_blog first (unless dry_run, but even then we might want to see output?)
+    # If dry_run, we probably shouldn't write files.
+    # build_blog currently doesn't have a dry_run mode in its original implementation.
+    # I should probably respect dry_run for build_blog too.
+    
+    if dry_run:
+        print("=== DRY RUN MODE - No files will be modified ===\n")
+    
+    if not dry_run:
+        run_build_blog()
+    else:
+         print("Skipping blog build in dry-run mode (blog build does not support dry-run yet)")
+
+    # Then update placeholders
+    run_update_placeholders(dry_run, skip_common)
+    
+    print("\n=== Build Complete ===")
 
 if __name__ == "__main__":
     main()

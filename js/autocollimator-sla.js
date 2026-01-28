@@ -65,6 +65,7 @@ window.initSLAAutocollimator = function (config = {}) {
     const mirrorX = 900;
 
     const objFocalLength = objectiveX - reticleX;
+    const distObjMirror = mirrorX - objectiveX; // 220
     const sourceY = centerY - 150;
 
     // Use Shared Colors from ExperimentLib
@@ -72,6 +73,12 @@ window.initSLAAutocollimator = function (config = {}) {
     const C_WHITE = ExperimentLib.Colors.WHITE;
     const C_GREEN = ExperimentLib.Colors.GREEN;
     // const C_DIM = ExperimentLib.Colors.DIM; // Unused in this scope, but available
+
+    // Apply Limits
+    if (sourceSlider) {
+        sourceSlider.min = -23.1;
+        sourceSlider.max = 23.1;
+    }
 
     // Update dimensions on resize (if we decide to make it responsive via JS later)
     // For now, relies on width/height attributes or CSS scaling. 
@@ -174,42 +181,46 @@ window.initSLAAutocollimator = function (config = {}) {
         ctx.font = ExperimentLib.Fonts.Main;
         ctx.fillText("Micro Display", beamsplitterX - 45, sourceY - 25);
 
-        // --- 2. Ray Tracing: Chief Ray Only (White) ---
+        // --- 2. Ray Tracing: Adjusted to User Request ---
+        // Constraint: Output ray from active pixel always goes "down" and hits Mirror Center
         // Path: Source -> Beamsplitter -> Objective -> Mirror
 
-        // 1. Source to Beamsplitter Center
-        // We assume the chief ray hits the center of the BS to travel towards the Optical Axis of the Objective
-        // Ideally, the Virtual Source is at the focal plane.
-        // Ray starts at the active pixel.
+        // 1. Source (Active Pixel) -> Beamsplitter
         const sourcePixelX = drawnSourceX;
         const sourcePixelY = sourceY;
 
+        // Calculate where a vertical drop hits the BS (45deg line)
+        // BS Line eq: y = x - beamsplitterX + centerY
+        // We drop vertically, so x = sourcePixelX.
+        const bsHitY = sourcePixelX - beamsplitterX + centerY;
+
         ctx.beginPath();
         ctx.moveTo(sourcePixelX, sourcePixelY);
-        ctx.lineTo(beamsplitterX, centerY);
+        ctx.lineTo(sourcePixelX, bsHitY);
         ctx.strokeStyle = C_WHITE;
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // 2. Beamsplitter to Objective Center
-        // Ray reflects 90 deg at BS center towards Objective
+        // 2. Beamsplitter -> Objective
+        // Vertical ray reflects 90deg -> Horizontal
+        // Travels from (sourcePixelX, bsHitY) to Objective at same height
         ctx.beginPath();
-        ctx.moveTo(beamsplitterX, centerY);
-        ctx.lineTo(objectiveX, centerY);
+        ctx.moveTo(sourcePixelX, bsHitY);
+        ctx.lineTo(objectiveX, bsHitY);
         ctx.stroke();
 
-        // 3. Objective to Mirror (Collimated Beam Direction)
-        // If source is offset, the beam leaves at angle `beamAngle` relative to axis.
-        // It pivots at the Objective Center (Nodal Point).
-        const distObjMirror = mirrorX - objectiveX;
+        // 3. Objective -> Mirror (Forced to Center)
+        // Ray pivots at Objective to hit Mirror Center (mirrorX, centerY)
+        // const distObjMirror = mirrorX - objectiveX; // Now defined in outer scope
 
-        // Ray Angle calculation (same as before)
-        const rayAngle = Math.atan(-sourceXOffset / objFocalLength);
+        // Calculate the angle required to hit the center
+        // slope = (targetY - startY) / dist
+        // slope = (centerY - bsHitY) / distObjMirror
+        const raySlope = (centerY - bsHitY) / distObjMirror;
+        const rayAngle = Math.atan(raySlope);
+        const mirHitY = centerY; // Forced to center
 
-        // Calculate hit point on Mirror
-        const mirHitY = centerY + (distObjMirror * Math.tan(rayAngle));
-
-        ExperimentLib.drawRay(ctx, objectiveX, centerY, mirrorX, mirHitY, C_WHITE);
+        ExperimentLib.drawRay(ctx, objectiveX, bsHitY, mirrorX, mirHitY, C_WHITE);
 
 
         // --- 3. Mirror Component ---
@@ -353,52 +364,19 @@ window.initSLAAutocollimator = function (config = {}) {
 
     // --- Coupling Logic ---
     // Goal: 1 counter acts the other to stay aligned.
-    // Alignment Condition: Ray hits the reticle/aperture center.
-    // Ray Angle from source: alpha = atan(x / f)
-    // Reflected Angle: beta = 2*theta - alpha
-    // For alignment (return to source/center), beta should be ~0 (or specifically such that it hits the aperture center).
-    // Actually, for it to hit the center of the aperture (which is the source conjugate), 
-    // the return ray must exhibit a specific angle.
-    // Simpler View:
-    // The "Null" condition for an autocollimator: The return beam angle matches the source beam angle? 
-    // No, standard autocollimator: 
-    // Source at focus. Ray collimated. Hits mirror at angle theta. Reflected ray angle 2*theta.
-    // Focuses at displacement d = f * tan(2*theta).
-    // To "counteract" and "stay aligned" (implying the spot stays on the specific sensor pixel? or center?),
-    // If we want the beam to pass through the Aperture (which is at the center, dx=0),
-    // then the return ray must be on-axis (angle 0) or hit the specific aperture gap.
-    //
-    // Let's assume "aligned" means the return spot hits the center of the aperture (ReticleX).
-    // Return Height h = f * tan(2*theta - alpha).
-    // We want h = 0.
-    // => 2*theta - alpha = 0
-    // => alpha = 2*theta
-    // => atan(sourceX / f) = 2*theta
-    // => sourceX = f * tan(2*theta)
-    // Note: Directionality. 
-    // In our coord system:
-    // Forward ray angle: rayAngle = atan(-sourceX / f). (Note the negative in original code because pos X is down?)
-    // Let's check original code: const rayAngle = Math.atan(-sourceXOffset / objFocalLength);
-    // Reflected: const reflectedAngle = 2 * angleRad - rayAngle;
-    // For alignment (hitting center), we want Refl Angle = 0 (assuming paraxial / center aperture).
-    // 0 = 2*theta - rayAngle
-    // rayAngle = 2*theta
-    // rayAngle = atan(-x / f)
-    // -x/f = tan(2*theta) -> x = -f * tan(2*theta)
-    // Note: Math.tan(-2*theta) is same as -tan(2*theta)
+    // Alignment Condition: Ray hits the true return path center (aperture center).
+    // Due to the "forced center" ray tracing logic, this corresponds to:
+    // angle(ray from lens) = 2 * mirror_angle
+    // atan(-sourceX / distObjMirror) = 2 * mirror_angle
+    // sourceX = -distObjMirror * tan(2 * mirror_angle)
 
     function updateFromTilt() {
         if (cfg.autoAlignCheckboxId) {
             const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
             if (autoAlign && autoAlign.checked) {
                 const angleRad = parseFloat(slider.value) * (Math.PI / 180);
-                // Condition for alignment: Reflected Ray Angle = 0
-                // 0 = 2*theta - rayAngle
-                // rayAngle = 2*theta
-                // rayAngle = atan(-x / f)
-                // -x/f = tan(2*theta) -> x = -f * tan(2*theta)
-                // Note: Math.tan(-2*theta) is same as -tan(2*theta)
-                let targetSourceX = objFocalLength * Math.tan(-2 * angleRad);
+                // Condition for alignment using distObjMirror (220)
+                let targetSourceX = distObjMirror * Math.tan(-2 * angleRad);
 
                 // Clamp to slider range
                 const min = parseFloat(sourceSlider.min);
@@ -418,11 +396,12 @@ window.initSLAAutocollimator = function (config = {}) {
             const autoAlign = document.getElementById(cfg.autoAlignCheckboxId);
             if (autoAlign && autoAlign.checked) {
                 const sourceX = parseFloat(sourceSlider.value);
-                // rayAngle = atan(-x/f)
-                // 2*theta = rayAngle
-                // theta = 0.5 * atan(-x/f)
+                // sourceX = -dist * tan(2*theta)
+                // -sourceX/dist = tan(2*theta)
+                // 2*theta = atan(-sourceX/dist)
+                // theta = 0.5 * atan(-sourceX / distObjMirror)
 
-                let targetThetaRad = 0.5 * Math.atan(-sourceX / objFocalLength);
+                let targetThetaRad = 0.5 * Math.atan(-sourceX / distObjMirror);
                 let targetThetaDeg = targetThetaRad * (180 / Math.PI);
 
                 // Clamp

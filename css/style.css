@@ -2651,8 +2651,8 @@ body.white-page .blog-card p {
     display: flex;
     justify-content: center;
     gap: 30px;
-    max-width: 1000px;
-    margin: 40px auto;
+    max-width: 1200px;
+    margin: 20px auto;
     flex-wrap: wrap;
 }
 
@@ -2667,10 +2667,9 @@ body.white-page .blog-card p {
 
 .image-item img {
     width: 100%;
-    height: auto;
+    height: 300px;
+    object-fit: contain;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
 

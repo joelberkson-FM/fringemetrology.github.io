@@ -64,7 +64,8 @@
                         <div class="dropdown-content">
                             <div class="dropdown-featured">
                                 <a href="projection.html" class="featured-card">
-                                    <div class="card-image" style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
+                                    <div class="card-image"
+                                        style="background-image: url('imgs/fringescan_custom_systems.jpg')"></div>
                                     <div class="card-text">
                                         <h4>Fringe Projection Profilometry</h4>
                                         <p>High precision, large surfaces <svg class="arrow-right" width="12"
@@ -302,8 +303,44 @@
 
                 <!-- Mobile Content: GIF -->
                 <div class="mobile-only">
+                    <p>
+                        At its core, the autocollimator is a slope measurement system, that measures the average slope
+                        over an optic. The old systems were completely analog, with a simple reticle and eye for
+                        measuring the surface slope.
+                    </p>
                     <div class="image-placeholder mobile-placeholder">
                         <img src="imgs/sla_what_is_sla.gif" alt="What is SLA">
+                    </div>
+                    <p>
+                        We make two key changes to a standard autocollimator layout: we replace the point source with an
+                        extended source, specifically a display, and a replace the reticle with an aperture stop,
+                        restricting the rays that enter the system to only chief rays.
+                    </p>
+                    <p>
+                        By changing the active pixel on the display, we can measure the slope of the mirror.
+                        Instead of just sending a single pixel at a time, we can send a structured pattern (fringes)
+                        with our micro display. Using the same math as phase-shifting interferometers, we convert images
+                        of the reflected phase shifted pattern to phase, then directly to slope. Because of this unique
+                        layout, each pixel on the sensor measures an isolated x slope and y slope.
+                    </p>
+                </div>
+
+                <div class="image-row-container">
+                    <div class="image-item">
+                        <img src="imgs/pattern_view.gif" alt="Pattern View">
+                        <p class="image-label">Pattern View</p>
+                    </div>
+                    <div class="image-item">
+                        <img src="imgs/camera_view.gif" alt="Camera View">
+                        <p class="image-label">Camera View</p>
+                    </div>
+                    <div class="image-item">
+                        <img src="imgs/x_slope.png" alt="X Slope">
+                        <p class="image-label">X Slope</p>
+                    </div>
+                    <div class="image-item">
+                        <img src="imgs/y_slope.png" alt="Y Slope">
+                        <p class="image-label">Y Slope</p>
                     </div>
                 </div>
             </div>

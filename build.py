@@ -585,7 +585,7 @@ def update_header(html_content, is_blog=False, is_index=False):
     return new_content, count > 0
 
 def update_partners_section(html_content, available_images):
-    """Update the partners/customers section with scrolling logos."""
+    """Update the partners/customers section with static logos display."""
     # Use explicit markers for reliability
     partners_pattern = r'(<!-- PARTNERS_START -->)([\s\S]*?)(<!-- PARTNERS_END -->)'
     
@@ -603,30 +603,22 @@ def update_partners_section(html_content, available_images):
     # Sort for consistency
     logo_images.sort()
 
-    # Generate images HTML
+    # Generate static display with just the logos (no duplication)
+    # Map filenames to readable alt text
+    alt_text_map = {
+        'composite_mirror_logo.png': 'Composite Mirror Applications',
+        'logo_mtex.avif': 'MTEX',
+        'logo_tech_launch_az.png': 'Tech Launch Arizona'
+    }
+    
     images_html = ""
     for _, filename in logo_images:
-        images_html += f'<img src="imgs/{filename}" alt="Partner Logo" class="partner-logo">\n'
-    
-    # Create a base set that is long enough to likely fill a screen width
-    # Assuming avg logo width + gap ~ 200px. 1920px screen ~ 10 logos.
-    base_set = images_html
-    # Count occurrences of img tag to estimate count
-    count = base_set.count('<img')
-    
-    # Repeat until we have at least 15 items in the base set to be safe
-    while base_set.count('<img') < 40:
-        base_set += images_html
+        alt_text = alt_text_map.get(filename, 'Partner Logo')
+        images_html += f'                    <img src="imgs/{filename}" alt="{alt_text}" class="partner-logo">\n'
         
     new_section_content = f"""
-                <div class="partners-track">
-                    <div class="slide-track">
-                        {base_set}
-                    </div>
-                    <div class="slide-track">
-                        {base_set}
-                    </div>
-                </div>
+                <div class="partners-static">
+{images_html}                </div>
                 """
     
     def replace_content(match):

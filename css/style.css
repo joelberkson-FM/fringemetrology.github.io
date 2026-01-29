@@ -2376,6 +2376,16 @@ body.white-page .blog-card p {
     overflow: hidden;
     position: relative;
     display: flex;
+    justify-content: center;
+}
+
+.partners-static {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    flex-wrap: wrap;
+    padding: 20px;
 }
 
 .partners-track {

@@ -416,8 +416,16 @@ def update_blog_index(posts):
     with open(BLOG_INDEX_FILE, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Sort posts by date desc
-    posts.sort(key=lambda x: x.get('date', ''), reverse=True)
+    # Sort posts by date desc (normalize to string for consistent comparison)
+    def get_date_key(post):
+        date = post.get('date')
+        if date is None:
+            return ''
+        if isinstance(date, datetime.date):
+            return date.isoformat()
+        return str(date)
+    
+    posts.sort(key=get_date_key, reverse=True)
     
     marker_start = '<!-- BLOG_POSTS_START -->'
     marker_end = '<!-- BLOG_POSTS_END -->'

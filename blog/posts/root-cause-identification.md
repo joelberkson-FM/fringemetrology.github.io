@@ -1,6 +1,6 @@
 ---
 title: "Root Cause Identification and Corrective Action"
-date: 2026-01-16
+date: 2023-06-12
 image: "../imgs/root_cause.png"
 description: "How high-resolution fringe measurement identified a grid-shaped surface error in LFAST mirrors, leading to a successful corrective action."
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Unlocking Efficient Panel Manufacturing for the ngVLA"
-date: 2026-01-16
+date: 2024-11-16
 image: "../imgs/dish.png"
 description: "The next-generation Very Large Array (ngVLA) radio telescope aims to produce 250, 18-meter aperture telescope in the next decade. This telescope will be able to resolve objects in the sky, like black holes, in a way that has never been seen before."
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Damage Analysis – Radio Telescope Panel"
-date: 2026-01-15
+date: 2022-3-30
 image: "../imgs/fringe_damage.jpg"
 description: "A case study on analyzing damage to a composite-material radio telescope panel with sub-millimeter precision."
 ---

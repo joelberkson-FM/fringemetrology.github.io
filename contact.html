@@ -7,6 +7,7 @@
     <title>Contact Us - Fringe Metrology</title>
     <link rel="icon" type="image/x-icon" href="imgs/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/css/intlTelInput.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -115,39 +116,47 @@
                         from our team will follow up promptly to discuss how we can support your goals.</p>
                 </div>
 
-                <form id="detailed-project-form" class="project-form" action="https://formly.email/submit"
-                    method="POST">
-                    <input type="hidden" name="access_key" value="602c6f6760ba4340a17f14e125f1eb72">
+                <div data-fs-success class="fs-success-message">
+                    <p>&#10003; Thank you! We&#8217;ll review your project details and be in touch soon.</p>
+                </div>
+                <div data-fs-error class="fs-error-message"></div>
+
+                <form id="detailed-project-form" class="project-form">
+                    <!-- Honeypot: keeps bots from submitting -->
+                    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
                     <div class="detailed-form-grid">
                         <div class="project-form-group">
-                            <input type="text" name="name" placeholder="Name" required>
+                            <input type="text" name="name" placeholder="Name" required data-fs-field>
+                            <span data-fs-error="name" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group">
-                            <input type="email" name="email" placeholder="Email" required>
+                            <input type="email" name="email" placeholder="Email" required data-fs-field>
+                            <span data-fs-error="email" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group">
-                            <input type="tel" name="phone" placeholder="Phone Number">
+                            <input id="phone-input" type="tel" placeholder="Phone Number" autocomplete="tel">
+                            <input type="hidden" name="phone" id="phone-hidden">
+                            <span data-fs-error="phone" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group">
-                            <input type="text" name="company" placeholder="Company Name">
+                            <input type="text" name="company" placeholder="Company Name" data-fs-field>
+                            <span data-fs-error="company" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group">
-                            <input type="text" name="timeline" placeholder="How soon do you need a solution?">
+                            <input type="text" name="timeline" placeholder="How soon do you need a solution?" data-fs-field>
+                            <span data-fs-error="timeline" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group">
-                            <input type="text" name="budget" placeholder="Budget Range">
+                            <input type="text" name="budget" placeholder="Budget Range" data-fs-field>
+                            <span data-fs-error="budget" class="fs-field-error"></span>
                         </div>
                         <div class="project-form-group form-full-width">
-                            <textarea name="description" rows="5" placeholder="Project Description"></textarea>
+                            <textarea name="description" rows="5" placeholder="Project Description" data-fs-field></textarea>
+                            <span data-fs-error="description" class="fs-field-error"></span>
                         </div>
-
-
                     </div>
 
-
-
-                    <button type="submit" class="cyan-btn">Send Project
-                        Details</button>
+                    <button type="submit" class="cyan-btn" data-fs-submit-btn>Send Project Details</button>
                 </form>
             </div>
         </section>
@@ -192,23 +201,30 @@
 
                 <div class="hero-contact-right">
                     <h2>Contact Us</h2>
-                    <form id="hero-contact-form" class="premium-form" action="https://formly.email/submit"
-                        method="POST">
-                        <input type="hidden" name="access_key" value="602c6f6760ba4340a17f14e125f1eb72">
+                    <div data-fs-success class="fs-success-message">
+                        <p>&#10003; Thanks for reaching out! We&#8217;ll be in touch shortly.</p>
+                    </div>
+                    <div data-fs-error class="fs-error-message"></div>
+                    <form id="hero-contact-form" class="premium-form">
+                        <!-- Honeypot: keeps bots from submitting -->
+                        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
                         <div class="form-group">
                             <label for="hero-name">Name</label>
-                            <input type="text" id="hero-name" name="name" placeholder="Name" required>
+                            <input type="text" id="hero-name" name="name" placeholder="Name" required data-fs-field>
+                            <span data-fs-error="name" class="fs-field-error"></span>
                         </div>
                         <div class="form-group">
                             <label for="hero-email">Email</label>
-                            <input type="email" id="hero-email" name="email" placeholder="Email" required>
+                            <input type="email" id="hero-email" name="email" placeholder="Email" required data-fs-field>
+                            <span data-fs-error="email" class="fs-field-error"></span>
                         </div>
                         <div class="form-group">
                             <label for="hero-message">Message</label>
                             <textarea id="hero-message" name="message" rows="4" placeholder="Message"
-                                required></textarea>
+                                required data-fs-field></textarea>
+                            <span data-fs-error="message" class="fs-field-error"></span>
                         </div>
-                        <button type="submit" class="submit-btn cyan-btn">Send Message</button>
+                        <button type="submit" class="submit-btn cyan-btn" data-fs-submit-btn>Send Message</button>
                     </form>
                 </div>
             </div>
@@ -226,6 +242,34 @@
         </div>
     </footer>
 
+    <script>
+        window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+        formspree('initForm', { formElement: '#hero-contact-form', formId: 'xgoplgwk' });
+        formspree('initForm', { formElement: '#detailed-project-form', formId: 'xvzvbepb' });
+    </script>
+    <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/js/intlTelInput.min.js"></script>
+    <script>
+        (function () {
+            var phoneEl = document.getElementById('phone-input');
+            var hiddenEl = document.getElementById('phone-hidden');
+            if (!phoneEl || !hiddenEl) return;
+
+            var iti = window.intlTelInput(phoneEl, {
+                initialCountry: 'us',
+                separateDialCode: true,
+                formatOnDisplay: true,
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23/build/js/utils.js'
+            });
+
+            // Keep the hidden field (what Formspree submits) in sync
+            function syncPhone() {
+                hiddenEl.value = iti.getNumber(); // E.164 e.g. +15205551234
+            }
+            phoneEl.addEventListener('input', syncPhone);
+            phoneEl.addEventListener('countrychange', syncPhone);
+        })();
+    </script>
     <script src="js/main.js"></script>
 </body>
 

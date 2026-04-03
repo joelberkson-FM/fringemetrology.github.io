@@ -3029,3 +3029,106 @@ body.white-page .blog-card p {
     color: #011D49;
     box-shadow: 0 0 10px rgba(204, 232, 94, 0.5);
 }
+
+/* =========================================
+   Formspree Feedback Messages
+   ========================================= */
+
+/* Success: hidden until Formspree shows it */
+[data-fs-success] {
+    display: none;
+    background: rgba(173, 203, 54, 0.12);
+    border: 1px solid rgba(173, 203, 54, 0.4);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+}
+
+[data-fs-success] p {
+    margin: 0;
+    color: inherit;
+}
+
+/* Form-level error banner */
+[data-fs-error]:not(:empty) {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.35);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    color: #f08080;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Field-level inline error text */
+.fs-field-error:not(:empty) {
+    display: block;
+    color: #f08080;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Invalid field highlight (set by Formspree via aria-invalid) */
+[aria-invalid="true"] {
+    border-color: rgba(220, 53, 69, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+
+/* Disabled submit button during submission */
+[data-fs-submit-btn]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* =========================================
+   intl-tel-input Overrides (Phone Field)
+   ========================================= */
+
+/* Make the wrapper fill the grid cell */
+.project-form-group .iti {
+    width: 100%;
+    display: block;
+}
+
+/* Match the project form input style */
+.project-form-group .iti input[type="tel"] {
+    width: 100%;
+    padding: 15px 15px 15px 90px; /* left space for flag + dial code */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    font-family: var(--font-main);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-form-group .iti input[type="tel"]:focus {
+    outline: none;
+    border-color: #007bbbff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 187, 0.1);
+}
+
+/* Flag button area */
+.project-form-group .iti__flag-container {
+    border-right: 1px solid #ddd;
+    border-radius: 8px 0 0 8px;
+}
+
+/* Dropdown list */
+.iti__country-list {
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid #ddd;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    max-height: 220px;
+}
